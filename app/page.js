@@ -66,7 +66,7 @@ const PRODUCTS = [
     colors: ["Coral", "Mango", "Ivory"],
     materials: "Cotton thread, bamboo hoop, linen fabric",
     size: "8 in / 20 cm",
-    checkout: "#CHECKOUT_LINK_VARIANT_001"
+    checkout: "https://1f20zv-41.myshopify.com/cart/44864343212089:1?channel=buy_button",
   },
   {
     id: "hk-002",
