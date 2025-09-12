@@ -5,17 +5,17 @@ import { ShoppingBag, Phone, Mail, Instagram, Youtube, ArrowRight, Languages, Sp
 import { QRCodeCanvas } from "qrcode.react";
 
 /* =========================
-   SETTINGS (edítame luego)
+   SETTINGS
 ========================= */
 const SETTINGS = {
   brand: "Heavenly Knits",
   taglineEN: "Handmade with love",
   taglineES: "Hecho a mano con amor",
-  phone: "+1 (520) 527-8311", // cambia
-  email: "hello.heavenlyknits@gmail.com", // cambia
-  instagram: "https://www.instagram.com/heavenlyknits.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==", // cambia
-  youtube: "https://www.youtube.com/@HeavenlyKnits",    // cambia
-  siteUrl: "https://heavenlyknits.com",       // cambia (para el QR de Feria)
+  phone: "+1 (520) 527-8311",
+  email: "hello.heavenlyknits@gmail.com",
+  instagram: "https://www.instagram.com/heavenlyknits.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+  youtube: "https://www.youtube.com/@HeavenlyKnits",
+  siteUrl: "https://heavenlyknits.com",
 };
 
 const COLORS = {
@@ -57,15 +57,19 @@ const i18n = {
   }
 };
 
+/* =========================
+   DATA
+========================= */
 const PRODUCTS = [
   {
     id: "hk-001",
     name: { en: "Embroidery Kit – Spring Garden", es: "Kit de Bordado – Jardín de Primavera" },
     price: "$32",
-    img: "/images/blusa-rose.png",
+    img: "/images/blusa-rose.png", // asegúrate que exista en /public/images/
     colors: ["Coral", "Mango", "Ivory"],
     materials: "Cotton thread, bamboo hoop, linen fabric",
     size: "8 in / 20 cm",
+    // Enlace estable con variant_id:
     checkout: "https://1f20zv-41.myshopify.com/cart/44864343212089:1?channel=buy_button",
   },
   {
@@ -76,7 +80,7 @@ const PRODUCTS = [
     colors: ["Bubblegum", "Mint", "Raspberry"],
     materials: "Recycled cotton yarn",
     size: "Ø 9–10 cm",
-    checkout: "#CHECKOUT_LINK_VARIANT_002"
+    checkout: "#", // pon aquí el link de Shopify cuando lo tengas
   },
   {
     id: "hk-003",
@@ -86,7 +90,7 @@ const PRODUCTS = [
     colors: ["Raspberry", "Pink", "Ivory"],
     materials: "100% cotton – 12 colors",
     size: "12 × 8 m skeins",
-    checkout: "#CHECKOUT_LINK_VARIANT_003"
+    checkout: "#", // pon aquí el link de Shopify cuando lo tengas
   }
 ];
 
@@ -111,24 +115,22 @@ const PROJECTS = [
   }
 ];
 
+/* =========================
+   HELPERS
+========================= */
 const scrollToId = (id) => {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
+/* =========================
+   PAGE
+========================= */
 export default function Page() {
   const [lang, setLang] = useState("en");
   const t = i18n[lang];
 
   const bgGradient = `linear-gradient(135deg, ${COLORS.pinkBrand} 0%, ${COLORS.coral} 50%, ${COLORS.bubblegum} 100%)`;
-
-  const handleBuy = (checkoutUrl) => {
-    if (!checkoutUrl || checkoutUrl.startsWith("#CHECKOUT")) {
-      alert("Add the Shopify Checkout Link for this product (variant). We’ll replace the placeholder.");
-      return;
-    }
-    window.open(checkoutUrl, "_blank", "noopener");
-  };
 
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`${SETTINGS.brand} — Enquiry`);
@@ -151,6 +153,7 @@ export default function Page() {
         }
       `}</style>
 
+      {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-[--graphite-100]">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -176,6 +179,7 @@ export default function Page() {
         </div>
       </header>
 
+      {/* Hero */}
       <section id="home" className="relative overflow-hidden">
         <div className="absolute inset-0 opacity-15" style={{background: bgGradient}} />
         <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10 items-center">
@@ -203,6 +207,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Catalog */}
       <section id="catalog" className="max-w-6xl mx-auto px-4 py-16">
         <div className="flex items-center gap-2 mb-6">
           <Palette size={18} className="text-[--raspberry]"/>
@@ -222,9 +227,27 @@ export default function Page() {
                   <div><span className="font-semibold">{t.catalog.colors}:</span> {p.colors.join(', ')}</div>
                   <div className="col-span-2"><span className="font-semibold">{t.catalog.materials}:</span> {p.materials}</div>
                 </div>
-                <div className="mt-4 flex gap-3">
-                  <button onClick={() => handleBuy(p.checkout)} className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:opacity-95"><ShoppingBag size={16}/>{t.catalog.buy}</button>
-                  <a href={mailtoHref} className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border hover:bg-[--graphite-100]">{t.catalog.enquire}</a>
+
+                {/* Actions */}
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <a
+                    href={p.checkout && p.checkout !== "#" ? p.checkout : undefined}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl text-white shadow-sm
+                                ${p.checkout && p.checkout !== "#" ? "bg-[--raspberry] hover:opacity-95 cursor-pointer" : "bg-[--graphite-600] opacity-60 cursor-not-allowed"}`}
+                    aria-disabled={!p.checkout || p.checkout === "#"}
+                  >
+                    <ShoppingBag size={16} />
+                    {t.catalog.buy}
+                  </a>
+
+                  <a
+                    href={mailtoHref}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border hover:bg-[--graphite-100]"
+                  >
+                    {t.catalog.enquire}
+                  </a>
                 </div>
               </div>
             </motion.article>
@@ -232,6 +255,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Portfolio */}
       <section id="portfolio" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.portfolio.title}</h2>
         <div className="grid md:grid-cols-3 gap-6">
@@ -247,6 +271,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* About */}
       <section id="about" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.about.title}</h2>
         <div className="grid md:grid-cols-2 gap-10 items-center">
@@ -260,6 +285,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Blog */}
       <section id="blog" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.blog.title}</h2>
         <div className="rounded-3xl bg-white border border-[--graphite-100] p-8 text-[--graphite-600]">
@@ -267,6 +293,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Contact */}
       <section id="contact" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.contact.title}</h2>
         <div className="grid md:grid-cols-2 gap-10">
@@ -290,6 +317,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Fair / QR */}
       <section id="fair" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.fair.title}</h2>
         <div className="grid md:grid-cols-2 gap-10 items-center bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-md">
@@ -305,6 +333,7 @@ export default function Page() {
         </div>
       </section>
 
+      {/* Footer */}
       <footer className="border-t border-[--graphite-100] py-10">
         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-[--graphite-600]">© {new Date().getFullYear()} {SETTINGS.brand}. {t.footer.rights}</div>
