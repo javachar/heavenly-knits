@@ -15,7 +15,7 @@ const SETTINGS = {
   email: "hello.heavenlyknits@gmail.com", // cambia
   instagram: "https://www.instagram.com/heavenlyknits.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==", // cambia
   youtube: "https://www.youtube.com/@HeavenlyKnits",    // cambia
-  siteUrl: "https://heavenly-knits.vercel.app/",       // cambia (para el QR de Feria)
+  siteUrl: "https://heavenlyknits.com",       // cambia (para el QR de Feria)
 };
 
 const COLORS = {
