@@ -130,7 +130,10 @@ export default function Page() {
   const [lang, setLang] = useState("en");
   const t = i18n[lang];
 
-  const bgGradient = `linear-gradient(135deg, ${COLORS.pinkBrand} 0%, ${COLORS.coral} 50%, ${COLORS.bubblegum} 100%)`;
+  const bgGradient = `linear-gradient(135deg,
+    color-mix(in srgb, ${COLORS.pinkBrand} 40%, white 60%) 0%,
+    color-mix(in srgb, ${COLORS.coral} 45%, white 55%) 50%,
+    color-mix(in srgb, ${COLORS.bubblegum} 40%, white 60%) 100%)`;
 
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`${SETTINGS.brand} — Enquiry`);
@@ -141,15 +144,15 @@ export default function Page() {
     <div className="min-h-screen bg-[--ivory] text-[--graphite-900]">
       <style>{`
         :root {
-          --pink: ${COLORS.pinkBrand};
-          --coral: ${COLORS.coral};
-          --mango: ${COLORS.mango};
-          --bubblegum: ${COLORS.bubblegum};
-          --raspberry: ${COLORS.raspberry};
-          --ivory: ${COLORS.ivory};
-          --graphite-900: ${COLORS.graphite900};
-          --graphite-600: ${COLORS.graphite600};
-          --graphite-100: ${COLORS.graphite100};
+          --pink: #F58FB5;
+          --coral: #FF8F70;
+          --mango: #FFA20D;
+          --bubblegum: #FF8CAA;
+          --raspberry: #C0356B;
+          --ivory: #FFF8F5;         /* más suave */
+          --graphite-900: #222222;  /* más legible */
+          --graphite-600: #5B5B5B;
+          --graphite-100: #ECECEC;
         }
       `}</style>
 
@@ -181,7 +184,7 @@ export default function Page() {
 
       {/* Hero */}
       <section id="home" className="relative overflow-hidden">
-        <div className="absolute inset-0 opacity-15" style={{background: bgGradient}} />
+        <div className="absolute inset-0 opacity-10" style={{ background: bgGradient }} />
         <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10 items-center">
           <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6}}>
             <h1 className="text-4xl md:text-5xl font-black leading-tight">
