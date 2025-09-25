@@ -1,7 +1,10 @@
 'use client';
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingBag, Phone, Mail, Instagram, Youtube, ArrowRight, Languages, Sparkles, Palette } from "lucide-react";
+import {
+  ShoppingBag, Phone, Mail, Instagram, Youtube,
+  ArrowRight, Languages, Sparkles, Palette
+} from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 
 /* =========================
@@ -19,15 +22,15 @@ const SETTINGS = {
 };
 
 const COLORS = {
-  pinkBrand: "#F58FB5",
+  pinkBrand: "#F6A3C0",
   coral: "#FF8F70",
-  mango: "#FFA20D",
-  bubblegum: "#FF8CAA",
-  raspberry: "#C0356B",
-  ivory: "#FFF4EE",
-  graphite900: "#2B2B2B",
-  graphite600: "#5E5E5E",
-  graphite100: "#F5F5F6"
+  mango: "#FFB341",
+  bubblegum: "#FFA2B8",
+  raspberry: "#B12E5E",
+  ivory: "#FFF7F2",
+  graphite900: "#1E1E1E",
+  graphite600: "#565656",
+  graphite100: "#EDEDED",
 };
 
 const i18n = {
@@ -65,11 +68,10 @@ const PRODUCTS = [
     id: "hk-001",
     name: { en: "Embroidery Kit – Spring Garden", es: "Kit de Bordado – Jardín de Primavera" },
     price: "$32",
-    img: "/images/blusa-rose.png", // asegúrate que exista en /public/images/
+    img: "/images/blusa-rose.png",
     colors: ["Coral", "Mango", "Ivory"],
     materials: "Cotton thread, bamboo hoop, linen fabric",
     size: "8 in / 20 cm",
-    // Enlace estable con variant_id:
     checkout: "https://1f20zv-41.myshopify.com/cart/44864343212089:1?channel=buy_button",
   },
   {
@@ -80,7 +82,7 @@ const PRODUCTS = [
     colors: ["Bubblegum", "Mint", "Raspberry"],
     materials: "Recycled cotton yarn",
     size: "Ø 9–10 cm",
-    checkout: "#", // pon aquí el link de Shopify cuando lo tengas
+    checkout: "#", // reemplaza cuando tengas el link
   },
   {
     id: "hk-003",
@@ -90,7 +92,7 @@ const PRODUCTS = [
     colors: ["Raspberry", "Pink", "Ivory"],
     materials: "100% cotton – 12 colors",
     size: "12 × 8 m skeins",
-    checkout: "#", // pon aquí el link de Shopify cuando lo tengas
+    checkout: "#", // reemplaza cuando tengas el link
   }
 ];
 
@@ -130,10 +132,12 @@ export default function Page() {
   const [lang, setLang] = useState("en");
   const t = i18n[lang];
 
-  const bgGradient = `linear-gradient(135deg,
-    color-mix(in srgb, ${COLORS.pinkBrand} 40%, white 60%) 0%,
-    color-mix(in srgb, ${COLORS.coral} 45%, white 55%) 50%,
-    color-mix(in srgb, ${COLORS.bubblegum} 40%, white 60%) 100%)`;
+  const bgGradient = `linear-gradient(
+    135deg,
+    color-mix(in srgb, ${COLORS.pinkBrand} 35%, white 65%) 0%,
+    color-mix(in srgb, ${COLORS.coral} 35%, white 65%) 55%,
+    color-mix(in srgb, ${COLORS.bubblegum} 30%, white 70%) 100%
+  )`;
 
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`${SETTINGS.brand} — Enquiry`);
@@ -144,28 +148,36 @@ export default function Page() {
     <div className="min-h-screen bg-[--ivory] text-[--graphite-900]">
       <style>{`
         :root {
-          --pink: #F58FB5;
-          --coral: #FF8F70;
-          --mango: #FFA20D;
-          --bubblegum: #FF8CAA;
-          --raspberry: #C0356B;
-          --ivory: #FFF8F5;         /* más suave */
-          --graphite-900: #222222;  /* más legible */
-          --graphite-600: #5B5B5B;
-          --graphite-100: #ECECEC;
+          --pink: ${COLORS.pinkBrand};
+          --coral: ${COLORS.coral};
+          --mango: ${COLORS.mango};
+          --bubblegum: ${COLORS.bubblegum};
+          --raspberry: ${COLORS.raspberry};
+          --ivory: ${COLORS.ivory};
+          --graphite-900: ${COLORS.graphite900};
+          --graphite-600: ${COLORS.graphite600};
+          --graphite-100: ${COLORS.graphite100};
         }
       `}</style>
 
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-[--graphite-100]">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          {/* Logo + brand */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full" style={{background: bgGradient}} />
+            <img
+              src="/images/logo.svg"    // cambia a /images/logo.png si usas PNG
+              alt="Heavenly Knits"
+              className="h-9 w-auto"
+            />
             <div className="leading-tight">
               <div className="font-black text-lg tracking-tight">{SETTINGS.brand}</div>
-              <div className="text-xs text-[--graphite-600]">{lang === 'en' ? SETTINGS.taglineEN : SETTINGS.taglineES}</div>
+              <div className="text-xs text-[--graphite-600]">
+                {lang === 'en' ? SETTINGS.taglineEN : SETTINGS.taglineES}
+              </div>
             </div>
           </div>
+
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <button className="hover:text-[--raspberry]" onClick={() => scrollToId('home')}>{t.nav.home}</button>
             <button className="hover:text-[--raspberry]" onClick={() => scrollToId('catalog')}>{t.nav.catalog}</button>
@@ -175,8 +187,11 @@ export default function Page() {
             <button className="hover:text-[--raspberry]" onClick={() => scrollToId('contact')}>{t.nav.contact}</button>
             <button className="hover:text-[--raspberry]" onClick={() => scrollToId('fair')}>{t.nav.fair}</button>
           </nav>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl border text-sm hover:bg-[--graphite-100]"
-            onClick={() => setLang(prev => prev === 'en' ? 'es' : 'en')}>
+
+          <button
+            className="flex items-center gap-2 px-3 py-1.5 rounded-2xl border border-[--graphite-100] text-sm hover:bg-[--graphite-100] transition"
+            onClick={() => setLang(prev => prev === 'en' ? 'es' : 'en')}
+          >
             <Languages size={16} /> {t.lang}
           </button>
         </div>
@@ -191,13 +206,21 @@ export default function Page() {
               {t.hero.title}
             </h1>
             <p className="mt-4 text-[--graphite-600]">
-              {lang==='en' ? 'Colorimetry-driven palettes, feminine details, and artisanal technique.' : 'Paletas guiadas por colorimetría, detalles femeninos y técnica artesanal.'}
+              {lang==='en'
+                ? 'Colorimetry-driven palettes, feminine details, and artisanal technique.'
+                : 'Paletas guiadas por colorimetría, detalles femeninos y técnica artesanal.'}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <button onClick={() => scrollToId('catalog')} className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white shadow-sm hover:opacity-95">
+              <button
+                onClick={() => scrollToId('catalog')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white shadow-sm hover:brightness-95 active:scale-[0.99] transition"
+              >
                 <ShoppingBag size={18}/>{t.hero.ctaCatalog}
               </button>
-              <button onClick={() => scrollToId('portfolio')} className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border hover:bg-[--graphite-100]">
+              <button
+                onClick={() => scrollToId('portfolio')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition"
+              >
                 <Sparkles size={18}/>{t.hero.ctaPortfolio}
               </button>
             </div>
@@ -237,8 +260,8 @@ export default function Page() {
                     href={p.checkout && p.checkout !== "#" ? p.checkout : undefined}
                     target="_blank"
                     rel="noreferrer"
-                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl text-white shadow-sm
-                                ${p.checkout && p.checkout !== "#" ? "bg-[--raspberry] hover:opacity-95 cursor-pointer" : "bg-[--graphite-600] opacity-60 cursor-not-allowed"}`}
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl text-white shadow-sm transition
+                                ${p.checkout && p.checkout !== "#" ? "bg-[--raspberry] hover:brightness-95 active:scale-[0.99]" : "bg-[--graphite-600] opacity-60 cursor-not-allowed"}`}
                     aria-disabled={!p.checkout || p.checkout === "#"}
                   >
                     <ShoppingBag size={16} />
@@ -247,7 +270,7 @@ export default function Page() {
 
                   <a
                     href={mailtoHref}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border hover:bg-[--graphite-100]"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition"
                   >
                     {t.catalog.enquire}
                   </a>
@@ -305,7 +328,9 @@ export default function Page() {
             <input required placeholder={t.contact.name} className="w-full border rounded-xl px-4 py-2 mb-3"/>
             <input required type="email" placeholder={t.contact.email} className="w-full border rounded-xl px-4 py-2 mb-3"/>
             <textarea required placeholder={t.contact.msg} className="w-full border rounded-xl px-4 py-2 mb-3 h-32"/>
-            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:opacity-95">{t.contact.send}<ArrowRight size={16}/></button>
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:brightness-95 active:scale-[0.99] transition">
+              {t.contact.send}<ArrowRight size={16}/>
+            </button>
             <div className="text-sm text-[--graphite-600] mt-3">{t.contact.alt} <a href={mailtoHref} className="underline">{SETTINGS.email}</a></div>
           </form>
           <div className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
@@ -329,7 +354,11 @@ export default function Page() {
           </div>
           <div>
             <p className="text-[--graphite-600] mb-4">{t.fair.p}</p>
-            <a href="#catalog" onClick={(e)=>{e.preventDefault(); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'});}} className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:opacity-95">
+            <a
+              href="#catalog"
+              onClick={(e)=>{e.preventDefault(); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'});}}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:brightness-95 active:scale-[0.99] transition"
+            >
               {t.fair.cta} <ArrowRight size={16}/>
             </a>
           </div>

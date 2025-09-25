@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Tema base claro/oscuro (Next/Tailwind) */
 :root {
   --background: #ffffff;
   --foreground: #171717;
