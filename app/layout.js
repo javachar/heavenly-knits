@@ -37,7 +37,13 @@ export const metadata = {
       'Textiles & knits que se sienten como hogar.',
     images: ['/og-cover.jpg'],
   },
-  other: { 'application-manifest': '/manifest.webmanifest' }
+  manifest: "/manifest.webmanifest",
+  themeColor: "#FFF7F2",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Heavenly Knits",
+  },
 
 };
 
