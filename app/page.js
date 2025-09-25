@@ -166,7 +166,7 @@ export default function Page() {
           {/* Logo + brand */}
           <div className="flex items-center gap-3">
             <img
-              src="/images/logo.svg"    // cambia a /images/logo.png si usas PNG
+              src="/images/logo.png"    // cambia a /images/logo.png si usas PNG
               alt="Heavenly Knits"
               className="h-9 w-auto"
             />
