@@ -10,16 +10,16 @@ export const metadata = {
   description:
     'Heavenly Knits: textiles y bordados hechos a mano con amor. Paletas guiadas por colorimetría y detalles artesanales.',
   icons: {
-    // asegúrate de tener estos archivos en /public (ver paso 2)
     icon: [
-      { url: '/favicon.ico' },          // fallback clásico
-      { url: '/icon-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      { url: '/favicon.ico?v=3' },
+      { url: '/icon-32.png?v=3',  sizes: '32x32',   type: 'image/png' },
+      { url: '/icon-192.png?v=3', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png?v=3', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [{ url: '/apple-touch-icon.png', sizes: '180x180' }],
-    shortcut: ['/favicon.ico'],
+    apple: [{ url: '/apple-touch-icon.png?v=3', sizes: '180x180' }],
+    shortcut: ['/favicon.ico?v=3'],
   },
+  themeColor: '#FFF7F2',
   openGraph: {
     title: 'Heavenly Knits — Handmade with love',
     description:
