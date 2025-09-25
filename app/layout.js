@@ -37,6 +37,8 @@ export const metadata = {
       'Textiles & knits que se sienten como hogar.',
     images: ['/og-cover.jpg'],
   },
+  other: { 'application-manifest': '/manifest.webmanifest' }
+
 };
 
 export default function RootLayout({ children }) {
