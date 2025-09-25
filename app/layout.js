@@ -1,4 +1,7 @@
 // app/layout.js
+
+import "./globals.css";
+
 export const metadata = {
   metadataBase: new URL('https://heavenlyknits.com'),
   title: {
