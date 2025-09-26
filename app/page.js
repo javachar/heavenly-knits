@@ -1,63 +1,63 @@
 'use client';
-import React, { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   ShoppingBag, Phone, Mail, Instagram, Youtube,
   ArrowRight, Languages, Sparkles, Palette
-} from "lucide-react";
-import { QRCodeCanvas } from "qrcode.react";
+} from 'lucide-react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 /* =========================
    SETTINGS
 ========================= */
 const SETTINGS = {
-  brand: "Heavenly Knits",
-  taglineEN: "Handmade with love",
-  taglineES: "Hecho a mano con amor",
-  phone: "+1 (520) 527-8311",
-  email: "hello.heavenlyknits@gmail.com",
-  instagram: "https://www.instagram.com/heavenlyknits.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
-  youtube: "https://www.youtube.com/@HeavenlyKnits",
-  siteUrl: "https://heavenlyknits.com",
+  brand: 'Heavenly Knits',
+  taglineEN: 'Handmade with love',
+  taglineES: 'Hecho a mano con amor',
+  phone: '+1 (520) 527-8311',
+  email: 'hello.heavenlyknits@gmail.com',
+  instagram: 'https://www.instagram.com/heavenlyknits.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
+  youtube: 'https://www.youtube.com/@HeavenlyKnits',
+  siteUrl: 'https://heavenlyknits.com',
 };
 
 const COLORS = {
-  pinkBrand: "#F6A3C0",
-  coral: "#FF8F70",
-  mango: "#FFB341",
-  bubblegum: "#FFA2B8",
-  raspberry: "#B12E5E",
-  ivory: "#FFF7F2",
-  graphite900: "#1E1E1E",
-  graphite600: "#565656",
-  graphite100: "#EDEDED",
+  pinkBrand: '#F6A3C0',
+  coral: '#FF8F70',
+  mango: '#FFB341',
+  bubblegum: '#FFA2B8',
+  raspberry: '#B12E5E',
+  ivory: '#FFF7F2',
+  graphite900: '#1E1E1E',
+  graphite600: '#565656',
+  graphite100: '#EDEDED',
 };
 
 const i18n = {
   en: {
-    nav: { home: "Home", catalog: "Catalog", portfolio: "Portfolio", about: "About", blog: "Journal", contact: "Contact", fair: "Fair" },
-    hero: { title: "Textiles & Knits that feel like home.", ctaCatalog: "Explore Catalog", ctaPortfolio: "See Projects" },
-    catalog: { title: "Catalog", badge: "Made by Anguie", buy: "Buy", enquire: "Enquire", colors: "Colors", materials: "Materials", size: "Size" },
-    portfolio: { title: "Projects" },
-    about: { title: "About Anguie", p1: "Anguie is a Peruvian designer and visual artist based in Georgia. She creates delicate, colorful pieces using colorimetry to craft combinations that feel balanced and warm.", p2: "Heavenly Knits brings artisanal technique to modern living through thoughtful materials and detail." },
-    blog: { title: "Journal", empty: "Coming soon: tutorials, fair recaps, and behind the scenes." },
-    contact: { title: "Contact", formTitle: "Write us", name: "Name", email: "Email", msg: "Message", send: "Send", alt: "Or reach us at:" },
-    fair: { title: "Find us at the Fair", p: "Scan to open the site on your phone and explore the catalog.", cta: "Open Catalog" },
-    footer: { rights: "All rights reserved." },
-    lang: "ES"
+    nav: { home: 'Home', catalog: 'Catalog', portfolio: 'Portfolio', about: 'About', blog: 'Journal', contact: 'Contact', fair: 'Fair' },
+    hero: { title: 'Textiles & Knits that feel like home.', ctaCatalog: 'Explore Catalog', ctaPortfolio: 'See Projects' },
+    catalog: { title: 'Catalog', badge: 'Made by Anguie', buy: 'Buy', enquire: 'Enquire', colors: 'Colors', materials: 'Materials', size: 'Size' },
+    portfolio: { title: 'Projects' },
+    about: { title: 'About Anguie', p1: 'Anguie is a Peruvian designer and visual artist based in Georgia. She creates delicate, colorful pieces using colorimetry to craft combinations that feel balanced and warm.', p2: 'Heavenly Knits brings artisanal technique to modern living through thoughtful materials and detail.' },
+    blog: { title: 'Journal', empty: 'Coming soon: tutorials, fair recaps, and behind the scenes.' },
+    contact: { title: 'Contact', formTitle: 'Write us', name: 'Name', email: 'Email', msg: 'Message', send: 'Send', alt: 'Or reach us at:' },
+    fair: { title: 'Find us at the Fair', p: 'Scan to open the site on your phone and explore the catalog.', cta: 'Open Catalog' },
+    footer: { rights: 'All rights reserved.' },
+    lang: 'ES',
   },
   es: {
-    nav: { home: "Inicio", catalog: "Catálogo", portfolio: "Portafolio", about: "Acerca", blog: "Blog", contact: "Contacto", fair: "Feria" },
-    hero: { title: "Textiles y tejidos que se sienten como hogar.", ctaCatalog: "Ver catálogo", ctaPortfolio: "Ver proyectos" },
-    catalog: { title: "Catálogo", badge: "Hecho por Anguie", buy: "Comprar", enquire: "Encargar", colors: "Colores", materials: "Materiales", size: "Tamaño" },
-    portfolio: { title: "Proyectos" },
-    about: { title: "Sobre Anguie", p1: "Anguie es diseñadora y artista visual peruana radicada en Georgia. Crea piezas delicadas y coloridas aplicando colorimetría para lograr combinaciones equilibradas y cálidas.", p2: "Heavenly Knits acerca la técnica artesanal a la vida moderna con materiales y detalles pensados." },
-    blog: { title: "Blog", empty: "Muy pronto: tutoriales, crónicas de ferias y detrás de cámaras." },
-    contact: { title: "Contacto", formTitle: "Escríbenos", name: "Nombre", email: "Correo", msg: "Mensaje", send: "Enviar", alt: "O contáctanos en:" },
-    fair: { title: "Encuéntranos en la feria", p: "Escanea para abrir el sitio en tu celular y explorar el catálogo.", cta: "Abrir catálogo" },
-    footer: { rights: "Todos los derechos reservados." },
-    lang: "EN"
-  }
+    nav: { home: 'Inicio', catalog: 'Catálogo', portfolio: 'Portafolio', about: 'Acerca', blog: 'Blog', contact: 'Contacto', fair: 'Feria' },
+    hero: { title: 'Textiles y tejidos que se sienten como hogar.', ctaCatalog: 'Ver catálogo', ctaPortfolio: 'Ver proyectos' },
+    catalog: { title: 'Catálogo', badge: 'Hecho por Anguie', buy: 'Comprar', enquire: 'Encargar', colors: 'Colores', materials: 'Materiales', size: 'Tamaño' },
+    portfolio: { title: 'Proyectos' },
+    about: { title: 'Sobre Anguie', p1: 'Anguie es diseñadora y artista visual peruana radicada en Georgia. Crea piezas delicadas y coloridas aplicando colorimetría para lograr combinaciones equilibradas y cálidas.', p2: 'Heavenly Knits acerca la técnica artesanal a la vida moderna con materiales y detalles pensados.' },
+    blog: { title: 'Blog', empty: 'Muy pronto: tutoriales, crónicas de ferias y detrás de cámaras.' },
+    contact: { title: 'Contacto', formTitle: 'Escríbenos', name: 'Nombre', email: 'Correo', msg: 'Mensaje', send: 'Enviar', alt: 'O contáctanos en:' },
+    fair: { title: 'Encuéntranos en la feria', p: 'Escanea para abrir el sitio en tu celular y explorar el catálogo.', cta: 'Abrir catálogo' },
+    footer: { rights: 'Todos los derechos reservados.' },
+    lang: 'EN',
+  },
 };
 
 /* =========================
@@ -65,56 +65,56 @@ const i18n = {
 ========================= */
 const PRODUCTS = [
   {
-    id: "hk-001",
-    name: { en: "Embroidery Kit – Spring Garden", es: "Kit de Bordado – Jardín de Primavera" },
-    price: "$32",
-    img: "/images/blusa-rose.png",
-    colors: ["Coral", "Mango", "Ivory"],
-    materials: "Cotton thread, bamboo hoop, linen fabric",
-    size: "8 in / 20 cm",
-    checkout: "https://1f20zv-41.myshopify.com/cart/44864343212089:1?channel=buy_button",
+    id: 'hk-001',
+    name: { en: 'Embroidery Kit – Spring Garden', es: 'Kit de Bordado – Jardín de Primavera' },
+    price: '$32',
+    img: '/images/blusa-rose.png',
+    colors: ['Coral', 'Mango', 'Ivory'],
+    materials: 'Cotton thread, bamboo hoop, linen fabric',
+    size: '8 in / 20 cm',
+    checkout: 'https://1f20zv-41.myshopify.com/cart/44864343212089:1?channel=buy_button',
   },
   {
-    id: "hk-002",
-    name: { en: "Crochet Cover – Mini Planter", es: "Funda de Crochet – Macetero Mini" },
-    price: "$18",
-    img: "https://images.unsplash.com/photo-1598023696416-0193a0bcd39b?q=80&w=1200&auto=format&fit=crop",
-    colors: ["Bubblegum", "Mint", "Raspberry"],
-    materials: "Recycled cotton yarn",
-    size: "Ø 9–10 cm",
-    checkout: "#", // reemplaza cuando tengas el link
+    id: 'hk-002',
+    name: { en: 'Crochet Cover – Mini Planter', es: 'Funda de Crochet – Macetero Mini' },
+    price: '$18',
+    img: 'https://images.unsplash.com/photo-1598023696416-0193a0bcd39b?q=80&w=1200&auto=format&fit=crop',
+    colors: ['Bubblegum', 'Mint', 'Raspberry'],
+    materials: 'Recycled cotton yarn',
+    size: 'Ø 9–10 cm',
+    checkout: '#', // reemplaza cuando tengas el link
   },
   {
-    id: "hk-003",
-    name: { en: "Embroidery Threads – Colorimetry Set", es: "Hilos de Bordado – Set Colorimetría" },
-    price: "$24",
-    img: "https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop",
-    colors: ["Raspberry", "Pink", "Ivory"],
-    materials: "100% cotton – 12 colors",
-    size: "12 × 8 m skeins",
-    checkout: "#", // reemplaza cuando tengas el link
-  }
+    id: 'hk-003',
+    name: { en: 'Embroidery Threads – Colorimetry Set', es: 'Hilos de Bordado – Set Colorimetría' },
+    price: '$24',
+    img: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop',
+    colors: ['Raspberry', 'Pink', 'Ivory'],
+    materials: '100% cotton – 12 colors',
+    size: '12 × 8 m skeins',
+    checkout: '#', // reemplaza cuando tengas el link
+  },
 ];
 
 const PROJECTS = [
   {
-    id: "p-01",
-    title: { en: "Botanical Series", es: "Serie Botánica" },
-    img: "https://images.unsplash.com/photo-1504194104404-433180773017?q=80&w=1200&auto=format&fit=crop",
-    desc: { en: "Textures and layered stitches inspired by gardens.", es: "Texturas y puntadas en capas inspiradas en jardines." }
+    id: 'p-01',
+    title: { en: 'Botanical Series', es: 'Serie Botánica' },
+    img: 'https://images.unsplash.com/photo-1504194104404-433180773017?q=80&w=1200&auto=format&fit=crop',
+    desc: { en: 'Textures and layered stitches inspired by gardens.', es: 'Texturas y puntadas en capas inspiradas en jardines.' },
   },
   {
-    id: "p-02",
-    title: { en: "Homes & Memories", es: "Hogares y Memorias" },
-    img: "https://images.unsplash.com/photo-1520975922284-7b683fe621b9?q=80&w=1200&auto=format&fit=crop",
-    desc: { en: "Custom pieces for warm interiors.", es: "Piezas a medida para interiores cálidos." }
+    id: 'p-02',
+    title: { en: 'Homes & Memories', es: 'Hogares y Memorias' },
+    img: 'https://images.unsplash.com/photo-1520975922284-7b683fe621b9?q=80&w=1200&auto=format&fit=crop',
+    desc: { en: 'Custom pieces for warm interiors.', es: 'Piezas a medida para interiores cálidos.' },
   },
   {
-    id: "p-03",
-    title: { en: "Colorimetry Studies", es: "Estudios de Colorimetría" },
-    img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
-    desc: { en: "Balanced, feminine palettes for textiles.", es: "Paletas equilibradas y femeninas para textiles." }
-  }
+    id: 'p-03',
+    title: { en: 'Colorimetry Studies', es: 'Estudios de Colorimetría' },
+    img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop',
+    desc: { en: 'Balanced, feminine palettes for textiles.', es: 'Paletas equilibradas y femeninas para textiles.' },
+  },
 ];
 
 /* =========================
@@ -122,15 +122,38 @@ const PROJECTS = [
 ========================= */
 const scrollToId = (id) => {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
 /* =========================
    PAGE
 ========================= */
 export default function Page() {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState('en');
+  const [scrolled, setScrolled] = useState(false);
   const t = i18n[lang];
+
+  // Persistir idioma y detectar la primera vez
+  useEffect(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('hk_lang') : null;
+    if (saved === 'en' || saved === 'es') {
+      setLang(saved);
+    } else {
+      const nav = typeof navigator !== 'undefined' ? navigator.language || '' : '';
+      setLang(nav.toLowerCase().startsWith('es') ? 'es' : 'en');
+    }
+  }, []);
+  useEffect(() => {
+    if (typeof window !== 'undefined') localStorage.setItem('hk_lang', lang);
+  }, [lang]);
+
+  // Sombra del header al hacer scroll
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const bgGradient = `linear-gradient(
     135deg,
@@ -161,15 +184,16 @@ export default function Page() {
       `}</style>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur bg-white/70 border-b border-[--graphite-100]">
+      <header
+        className={
+          `sticky top-0 z-50 border-b border-[--graphite-100] ` +
+          (scrolled ? 'bg-white/80 backdrop-blur shadow-sm' : 'bg-white/60 backdrop-blur')
+        }
+      >
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           {/* Logo + brand */}
           <div className="flex items-center gap-3">
-            <img
-              src="/images/logo.png"    // cambia a /images/logo.png si usas PNG
-              alt="Heavenly Knits"
-              className="h-9 w-auto"
-            />
+            <img src="/images/logo.png" alt="Heavenly Knits logo" className="h-9 w-auto" />
             <div className="leading-tight">
               <div className="font-black text-lg tracking-tight">{SETTINGS.brand}</div>
               <div className="text-xs text-[--graphite-600]">
@@ -198,7 +222,7 @@ export default function Page() {
       </header>
 
       {/* Hero */}
-      <section id="home" className="relative overflow-hidden">
+      <section id="home" className="relative overflow-hidden section-anchor">
         <div className="absolute inset-0 opacity-10" style={{ background: bgGradient }} />
         <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10 items-center">
           <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6}}>
@@ -213,13 +237,13 @@ export default function Page() {
             <div className="mt-8 flex flex-wrap gap-3">
               <button
                 onClick={() => scrollToId('catalog')}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white shadow-sm hover:brightness-95 active:scale-[0.99] transition"
+                className="btn-primary"
               >
                 <ShoppingBag size={18}/>{t.hero.ctaCatalog}
               </button>
               <button
                 onClick={() => scrollToId('portfolio')}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition"
+                className="btn-ghost"
               >
                 <Sparkles size={18}/>{t.hero.ctaPortfolio}
               </button>
@@ -227,24 +251,28 @@ export default function Page() {
           </motion.div>
           <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6, delay:.1}} className="md:justify-self-end">
             <div className="rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5">
-              <img src="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1400&auto=format&fit=crop" alt="Heavenly Knits" className="w-full h-[360px] object-cover"/>
+              <img
+                src="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1400&auto=format&fit=crop"
+                alt="Embroidery and knits"
+                className="w-full h-[360px] object-cover"
+              />
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Catalog */}
-      <section id="catalog" className="max-w-6xl mx-auto px-4 py-16">
+      <section id="catalog" className="max-w-6xl mx-auto px-4 py-16 section-anchor">
         <div className="flex items-center gap-2 mb-6">
           <Palette size={18} className="text-[--raspberry]"/>
           <h2 className="text-2xl font-black">{t.catalog.title}</h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {PRODUCTS.map(p => (
-            <motion.article key={p.id} initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.4}} className="bg-white rounded-3xl overflow-hidden shadow-md border border-[--graphite-100] flex flex-col">
+            <motion.article key={p.id} initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.4}} className="card">
               <div className="relative">
                 <img src={p.img} alt={p.name[lang]} className="w-full h-56 object-cover"/>
-                <span className="absolute top-3 left-3 text-xs bg-white/90 rounded-full px-3 py-1 shadow">{t.catalog.badge}</span>
+                <span className="badge">{t.catalog.badge}</span>
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <h3 className="font-bold text-lg">{p.name[lang]}</h3>
@@ -254,24 +282,19 @@ export default function Page() {
                   <div className="col-span-2"><span className="font-semibold">{t.catalog.materials}:</span> {p.materials}</div>
                 </div>
 
-                {/* Actions */}
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <a
-                    href={p.checkout && p.checkout !== "#" ? p.checkout : undefined}
+                    href={p.checkout && p.checkout !== '#' ? p.checkout : undefined}
                     target="_blank"
                     rel="noreferrer"
-                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl text-white shadow-sm transition
-                                ${p.checkout && p.checkout !== "#" ? "bg-[--raspberry] hover:brightness-95 active:scale-[0.99]" : "bg-[--graphite-600] opacity-60 cursor-not-allowed"}`}
-                    aria-disabled={!p.checkout || p.checkout === "#"}
+                    className={`btn-primary justify-center ${(!p.checkout || p.checkout === '#') ? 'btn-disabled' : ''}`}
+                    aria-disabled={!p.checkout || p.checkout === '#'}
                   >
                     <ShoppingBag size={16} />
                     {t.catalog.buy}
                   </a>
 
-                  <a
-                    href={mailtoHref}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition"
-                  >
+                  <a href={mailtoHref} className="btn-ghost justify-center">
                     {t.catalog.enquire}
                   </a>
                 </div>
@@ -282,11 +305,11 @@ export default function Page() {
       </section>
 
       {/* Portfolio */}
-      <section id="portfolio" className="max-w-6xl mx-auto px-4 py-16">
+      <section id="portfolio" className="max-w-6xl mx-auto px-4 py-16 section-anchor">
         <h2 className="text-2xl font-black mb-6">{t.portfolio.title}</h2>
         <div className="grid md:grid-cols-3 gap-6">
           {PROJECTS.map(pr => (
-            <motion.figure key={pr.id} initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:.6}} className="rounded-3xl overflow-hidden shadow-md border border-[--graphite-100] bg-white">
+            <motion.figure key={pr.id} initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:.6}} className="card">
               <img src={pr.img} alt={pr.title[lang]} className="w-full h-56 object-cover"/>
               <figcaption className="p-4">
                 <div className="font-semibold">{pr.title[lang]}</div>
@@ -298,7 +321,7 @@ export default function Page() {
       </section>
 
       {/* About */}
-      <section id="about" className="max-w-6xl mx-auto px-4 py-16">
+      <section id="about" className="max-w-6xl mx-auto px-4 py-16 section-anchor">
         <h2 className="text-2xl font-black mb-6">{t.about.title}</h2>
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="rounded-3xl overflow-hidden shadow-md ring-1 ring-black/5">
@@ -312,28 +335,28 @@ export default function Page() {
       </section>
 
       {/* Blog */}
-      <section id="blog" className="max-w-6xl mx-auto px-4 py-16">
+      <section id="blog" className="max-w-6xl mx-auto px-4 py-16 section-anchor">
         <h2 className="text-2xl font-black mb-6">{t.blog.title}</h2>
-        <div className="rounded-3xl bg-white border border-[--graphite-100] p-8 text-[--graphite-600]">
+        <div className="card p-8 text-[--graphite-600]">
           {t.blog.empty}
         </div>
       </section>
 
       {/* Contact */}
-      <section id="contact" className="max-w-6xl mx-auto px-4 py-16">
+      <section id="contact" className="max-w-6xl mx-auto px-4 py-16 section-anchor">
         <h2 className="text-2xl font-black mb-6">{t.contact.title}</h2>
         <div className="grid md:grid-cols-2 gap-10">
-          <form onSubmit={(e)=>{e.preventDefault(); window.location.href = mailtoHref;}} className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
+          <form onSubmit={(e)=>{e.preventDefault(); window.location.href = mailtoHref;}} className="card p-6">
             <div className="text-lg font-semibold mb-4">{t.contact.formTitle}</div>
-            <input required placeholder={t.contact.name} className="w-full border rounded-xl px-4 py-2 mb-3"/>
-            <input required type="email" placeholder={t.contact.email} className="w-full border rounded-xl px-4 py-2 mb-3"/>
-            <textarea required placeholder={t.contact.msg} className="w-full border rounded-xl px-4 py-2 mb-3 h-32"/>
-            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:brightness-95 active:scale-[0.99] transition">
+            <input required placeholder={t.contact.name} className="input" />
+            <input required type="email" placeholder={t.contact.email} className="input" />
+            <textarea required placeholder={t.contact.msg} className="input h-32" />
+            <button className="btn-primary mt-1">
               {t.contact.send}<ArrowRight size={16}/>
             </button>
             <div className="text-sm text-[--graphite-600] mt-3">{t.contact.alt} <a href={mailtoHref} className="underline">{SETTINGS.email}</a></div>
           </form>
-          <div className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
+          <div className="card p-6">
             <div className="flex flex-col gap-3">
               <a className="inline-flex items-center gap-3" href={`tel:${SETTINGS.phone}`}><Phone size={18}/> {SETTINGS.phone}</a>
               <a className="inline-flex items-center gap-3" href={`mailto:${SETTINGS.email}`}><Mail size={18}/> {SETTINGS.email}</a>
@@ -346,18 +369,18 @@ export default function Page() {
       </section>
 
       {/* Fair / QR */}
-      <section id="fair" className="max-w-6xl mx-auto px-4 py-16">
+      <section id="fair" className="max-w-6xl mx-auto px-4 py-16 section-anchor">
         <h2 className="text-2xl font-black mb-6">{t.fair.title}</h2>
-        <div className="grid md:grid-cols-2 gap-10 items-center bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-md">
+        <div className="grid md:grid-cols-2 gap-10 items-center card p-8">
           <div className="justify-self-center">
-            <QRCodeCanvas value={SETTINGS.siteUrl} size={220} bgColor="#ffffff" fgColor={COLORS.graphite900} includeMargin={true} />
+            <QRCodeCanvas value={SETTINGS.siteUrl} size={220} bgColor="#ffffff" fgColor={COLORS.graphite900} includeMargin />
           </div>
           <div>
             <p className="text-[--graphite-600] mb-4">{t.fair.p}</p>
             <a
               href="#catalog"
               onClick={(e)=>{e.preventDefault(); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'});}}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:brightness-95 active:scale-[0.99] transition"
+              className="btn-primary inline-flex"
             >
               {t.fair.cta} <ArrowRight size={16}/>
             </a>
