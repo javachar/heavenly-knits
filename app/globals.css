@@ -35,3 +35,10 @@ html, body {
 /* Titulares y subtítulos a lo StayCrafty */
 .h-section   { @apply font-display text-2xl md:text-[28px] font-semibold; }
 .kicker      { @apply uppercase tracking-wider text-[12px] text-[--graphite-600]; }
+
+/* Fuentes lógicas: ajusta si ya tienes @font-face locales */
+.font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+.font-ui      { font-family: var(--font-ui); }
+
+/* Tamaño grande estilo StayCrafty */
+.huge { font-size: clamp(44px, 9vw, 128px); line-height: .9; }
