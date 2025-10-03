@@ -1,5 +1,22 @@
 // app/layout.js
 import "./globals.css";
+import localFont from "next/font/local";
+import { Poppins } from "next/font/google";
+
+const recoleta = localFont({
+  src: "/fonts/recoleta-alt-semibold.otf",
+  variable: "--font-display",
+  weight: "600",
+  style: "normal",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata = {
   metadataBase: new URL("https://heavenlyknits.com"),
@@ -12,7 +29,7 @@ export const metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico?v=3" },
-      { url: "/icon-32.png?v=3",  sizes: "32x32",   type: "image/png" },
+      { url: "/icon-32.png?v=3", sizes: "32x32", type: "image/png" },
       { url: "/icon-192.png?v=3", sizes: "192x192", type: "image/png" },
       { url: "/icon-512.png?v=3", sizes: "512x512", type: "image/png" },
     ],
@@ -46,7 +63,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${recoleta.variable} ${poppins.variable}`}>
       <body>{children}</body>
     </html>
   );

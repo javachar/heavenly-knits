@@ -19,3 +19,49 @@ body { background:var(--background); color:var(--foreground); font-family: Arial
 .card        { @apply bg-white rounded-3xl overflow-hidden shadow-md border border-[--graphite-100] flex flex-col; }
 .badge       { @apply absolute top-3 left-3 text-xs bg-white/90 rounded-full px-3 py-1 shadow; }
 
+/* === FUENTES === */
+body {
+  /* Poppins por defecto */
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+/* Recoleta Alt Semibold para títulos */
+.font-display,
+h1, h2, h3 {
+  font-family: var(--font-display), "Georgia", "Times New Roman", serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Nav en mayúsculas tipo staycrafty */
+.nav-caps {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600; /* Poppins Semibold */
+  font-size: 12.5px;
+}
+
+/* Botones estilo staycrafty */
+.btn-dark {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full text-white bg-black hover:opacity-90 active:scale-[0.99] transition;
+}
+.btn-outline {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[--graphite-100] hover:bg-[--graphite-100] transition;
+}
+
+/* Chips/Badges */
+.chip {
+  @apply px-3 py-1.5 rounded-full border border-[--graphite-100] text-sm hover:bg-[--graphite-100] transition;
+}
+
+/* Tarjetas limpias */
+.card {
+  @apply bg-white rounded-3xl overflow-hidden border border-[--graphite-100] transition;
+}
+.card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.06); transform: translateY(-1px); }
+
+/* Otros helpers ya usados antes */
+.section-anchor { scroll-margin-top: 88px; }
+.input { @apply w-full border border-[--graphite-100] rounded-xl px-4 py-2 mb-3; }
+.badge { @apply absolute top-3 left-3 text-xs bg-white/90 rounded-full px-3 py-1 shadow; }
