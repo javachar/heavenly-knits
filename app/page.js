@@ -3,7 +3,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ShoppingBag, Phone, Mail, Instagram, Youtube,
-  ArrowRight, Languages, Sparkles, Palette, Heart, Leaf, Truck, ChevronRight
+  ArrowRight, Languages, Sparkles, Palette
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 
@@ -39,18 +39,12 @@ const i18n = {
     hero: { title: "Textiles & Knits that feel like home.", ctaCatalog: "Explore Catalog", ctaPortfolio: "See Projects" },
     catalog: { title: "Catalog", badge: "Made by Anguie", buy: "Buy", enquire: "Enquire", colors: "Colors", materials: "Materials", size: "Size" },
     portfolio: { title: "Projects" },
-    about: { title: "About Anguie" , p1: "Anguie is a Peruvian designer and visual artist based in Georgia. She creates delicate, colorful pieces using colorimetry to craft combinations that feel balanced and warm.", p2: "Heavenly Knits brings artisanal technique to modern living through thoughtful materials and detail." },
+    about: { title: "About Anguie", p1: "Anguie is a Peruvian designer and visual artist based in Georgia. She creates delicate, colorful pieces using colorimetry to craft combinations that feel balanced and warm.", p2: "Heavenly Knits brings artisanal technique to modern living through thoughtful materials and detail." },
     blog: { title: "Journal", empty: "Coming soon: tutorials, fair recaps, and behind the scenes." },
     contact: { title: "Contact", formTitle: "Write us", name: "Name", email: "Email", msg: "Message", send: "Send", alt: "Or reach us at:" },
     fair: { title: "Find us at the Fair", p: "Scan to open the site on your phone and explore the catalog.", cta: "Open Catalog" },
     footer: { rights: "All rights reserved." },
-    chips: { kits: "Kits", crochet: "Crochet", threads: "Threads", new: "New In", gifts: "Gifts" },
-    features: {
-      handmade: "Handmade with love",
-      materials: "Thoughtful materials",
-      ships: "Ships from Georgia"
-    },
-    quick: { shopKits: "Shop Kits", shopThreads: "Shop Threads", seeProjects: "See Projects" }
+    lang: "ES"
   },
   es: {
     nav: { home: "Inicio", catalog: "Catálogo", portfolio: "Portafolio", about: "Acerca", blog: "Blog", contact: "Contacto", fair: "Feria" },
@@ -62,13 +56,7 @@ const i18n = {
     contact: { title: "Contacto", formTitle: "Escríbenos", name: "Nombre", email: "Correo", msg: "Mensaje", send: "Enviar", alt: "O contáctanos en:" },
     fair: { title: "Encuéntranos en la feria", p: "Escanea para abrir el sitio en tu celular y explorar el catálogo.", cta: "Abrir catálogo" },
     footer: { rights: "Todos los derechos reservados." },
-    chips: { kits: "Kits", crochet: "Crochet", threads: "Hilos", new: "Novedades", gifts: "Regalos" },
-    features: {
-      handmade: "Hecho a mano con amor",
-      materials: "Materiales pensados",
-      ships: "Envíos desde Georgia"
-    },
-    quick: { shopKits: "Ver Kits", shopThreads: "Ver Hilos", seeProjects: "Ver Proyectos" }
+    lang: "EN"
   }
 };
 
@@ -144,6 +132,7 @@ export default function Page() {
   const [lang, setLang] = useState("en");
   const t = i18n[lang];
 
+  // Header como StayCrafty: compacto, sticky, con sombra al hacer scroll.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -152,8 +141,12 @@ export default function Page() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const bgGradient = `radial-gradient(1200px 600px at 20% 0%, ${COLORS.pinkBrand}1a 0%, transparent 60%),
-                      radial-gradient(1000px 600px at 80% -10%, ${COLORS.bubblegum}20 0%, transparent 70%)`;
+  const bgGradient = `linear-gradient(
+    135deg,
+    color-mix(in srgb, ${COLORS.pinkBrand} 35%, white 65%) 0%,
+    color-mix(in srgb, ${COLORS.coral} 35%, white 65%) 55%,
+    color-mix(in srgb, ${COLORS.bubblegum} 30%, white 70%) 100%
+  )`;
 
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`${SETTINGS.brand} — Enquiry`);
@@ -168,20 +161,6 @@ export default function Page() {
     ["blog", t.nav.blog],
     ["contact", t.nav.contact],
     ["fair", t.nav.fair],
-  ];
-
-  const chips = [
-    { id: "catalog", label: t.chips.kits },
-    { id: "catalog", label: t.chips.crochet },
-    { id: "catalog", label: t.chips.threads },
-    { id: "catalog", label: t.chips.new },
-    { id: "portfolio", label: t.chips.gifts },
-  ];
-
-  const features = [
-    { icon: Heart,   text: t.features.handmade },
-    { icon: Leaf,    text: t.features.materials },
-    { icon: Truck,   text: t.features.ships },
   ];
 
   return (
@@ -200,21 +179,21 @@ export default function Page() {
         }
       `}</style>
 
-      {/* Header tipo StayCrafty */}
+      {/* Header - estilo StayCrafty */}
       <header
         className={`sticky top-0 z-50 transition-all duration-200
-          ${scrolled ? "bg-white/95 shadow-[0_1px_0_0_rgba(0,0,0,.06)]" : "bg-white/70 backdrop-blur border-b border-[--graphite-100]"}
+          ${scrolled ? "bg-white/95 shadow-sm" : "bg-white/70 backdrop-blur border-b border-[--graphite-100]"}
         `}
       >
         <div className="max-w-6xl mx-auto h-14 px-4 flex items-center gap-4">
           {/* Logo + brand */}
           <a href="#home" className="flex items-center gap-3 shrink-0">
             <img src="/images/logo.png" alt="Heavenly Knits" className="h-7 w-auto" />
-            <span className="font-display tracking-tight text-[17px]">Heavenly Knits</span>
+            <span className="font-display text-[18px] leading-none">{SETTINGS.brand}</span>
           </a>
 
           {/* Nav (desktop) */}
-          <nav className="hidden md:flex items-center gap-6 nav-caps mx-auto">
+          <nav className="hidden md:flex items-center gap-6 text-[12.5px] uppercase tracking-wide mx-auto">
             {navItems.map(([id, label]) => (
               <button
                 key={id}
@@ -239,9 +218,9 @@ export default function Page() {
           </button>
         </div>
 
-        {/* Nav móvil */}
+        {/* Nav móvil (scroll horizontal) */}
         <div className="md:hidden overflow-x-auto px-4 pb-2 -mt-1">
-          <div className="flex gap-5 nav-caps text-[--graphite-600]">
+          <div className="flex gap-5 text-[13px] uppercase tracking-wide text-[--graphite-600]">
             {navItems.map(([id, label]) => (
               <button
                 key={id}
@@ -258,11 +237,12 @@ export default function Page() {
       </header>
 
       {/* Hero */}
-      <section id="home" className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: bgGradient }} />
-        <div className="max-w-6xl mx-auto px-4 py-16 md:py-20 grid md:grid-cols-2 gap-10 items-center">
+      <section id="home" className="section-anchor relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ background: bgGradient }} />
+        <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10 items-center">
           <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6}}>
-            <h1 className="font-display text-4xl md:text-5xl leading-tight">
+            <p className="kicker">Heavenly Knits</p>
+            <h1 className="font-display text-4xl md:text-5xl font-semibold leading-tight mt-1">
               {t.hero.title}
             </h1>
             <p className="mt-4 text-[--graphite-600]">
@@ -270,115 +250,60 @@ export default function Page() {
                 ? 'Colorimetry-driven palettes, feminine details, and artisanal technique.'
                 : 'Paletas guiadas por colorimetría, detalles femeninos y técnica artesanal.'}
             </p>
-
-            {/* Chips */}
-            <div className="mt-6 flex flex-wrap gap-2">
-              {chips.map((c, i) => (
-                <button key={i} onClick={() => scrollToId(c.id)} className="chip">
-                  {c.label}
-                </button>
-              ))}
-            </div>
-
-            {/* CTAs (primaria negra) */}
-            <div className="mt-7 flex flex-wrap gap-3">
-              <button onClick={() => scrollToId('catalog')} className="btn-dark">
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button onClick={() => scrollToId('catalog')} className="btn-primary">
                 <ShoppingBag size={18}/>{t.hero.ctaCatalog}
               </button>
-              <button onClick={() => scrollToId('portfolio')} className="btn-outline">
+              <button onClick={() => scrollToId('portfolio')} className="btn-ghost">
                 <Sparkles size={18}/>{t.hero.ctaPortfolio}
               </button>
             </div>
           </motion.div>
-
           <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6, delay:.1}} className="md:justify-self-end">
             <div className="rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5">
-              <img
-                src="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1400&auto=format&fit=crop"
-                alt="Heavenly Knits"
-                className="w-full h-[360px] object-cover"
-              />
+              <img src="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1400&auto=format&fit=crop" alt="Heavenly Knits" className="w-full h-[360px] object-cover"/>
             </div>
           </motion.div>
-        </div>
-
-        {/* Feature strip */}
-        <div className="max-w-6xl mx-auto px-4 pb-6">
-          <div className="grid sm:grid-cols-3 gap-3">
-            {features.map((f, i) => (
-              <div key={i} className="rounded-2xl bg-white/70 backdrop-blur border border-[--graphite-100] px-4 py-3 flex items-center gap-3">
-                <f.icon size={18} className="text-[--graphite-900]" />
-                <span className="text-sm text-[--graphite-900]">{f.text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Quick links */}
-      <section className="max-w-6xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-3 gap-4">
-          {[
-            { label: t.quick.shopKits, id: "catalog" },
-            { label: t.quick.shopThreads, id: "catalog" },
-            { label: t.quick.seeProjects, id: "portfolio" },
-          ].map((q, i) => (
-            <button
-              key={i}
-              onClick={() => scrollToId(q.id)}
-              className="group rounded-2xl bg-white border border-[--graphite-100] p-4 text-left
-                         hover:border-[--graphite-900] hover:shadow-sm transition"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{q.label}</span>
-                <ChevronRight className="group-hover:translate-x-0.5 transition" size={18} />
-              </div>
-            </button>
-          ))}
         </div>
       </section>
 
       {/* Catalog */}
-      <section id="catalog" className="max-w-6xl mx-auto px-4 py-14">
-        <div className="flex items-center gap-2 mb-6">
-          <Palette size={18} className="text-[--raspberry]"/>
-          <h2 className="font-display text-2xl">{t.catalog.title}</h2>
+      <section id="catalog" className="section-anchor max-w-6xl mx-auto px-4 py-16">
+        <div className="flex items-center gap-2 mb-2">
+          <Palette size={16} className="text-[--raspberry]"/>
+          <span className="kicker">Shop</span>
         </div>
+        <h2 className="h-section mb-6">{t.catalog.title}</h2>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {PRODUCTS.map(p => (
-            <motion.article
-              key={p.id}
-              initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.4}}
-              className="card"
-            >
+            <motion.article key={p.id} initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.4}} className="card">
               <div className="relative">
                 <img src={p.img} alt={p.name[lang]} className="w-full h-56 object-cover"/>
                 <span className="badge">{t.catalog.badge}</span>
               </div>
-
               <div className="p-4 flex-1 flex flex-col">
-                <h3 className="font-semibold text-lg">{p.name[lang]}</h3>
-                <div className="text-[--graphite-600] mt-1">{p.price}</div>
+                <h3 className="font-display text-lg">{p.name[lang]}</h3>
+                <div className="text-[--graphite-600] mt-0.5">{p.price}</div>
 
-                <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-                  <div><span className="font-semibold">{t.catalog.colors}:</span> {p.colors.join(', ')}</div>
-                  <div className="col-span-2"><span className="font-semibold">{t.catalog.materials}:</span> {p.materials}</div>
-                </div>
+                <dl className="mt-3 grid grid-cols-3 gap-2 text-xs text-[--graphite-600]">
+                  <div><dt className="font-semibold">{t.catalog.colors}:</dt><dd>{p.colors.join(', ')}</dd></div>
+                  <div className="col-span-2"><dt className="font-semibold">{t.catalog.materials}:</dt><dd>{p.materials}</dd></div>
+                </dl>
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <a
                     href={p.checkout && p.checkout !== "#" ? p.checkout : undefined}
-                    target="_blank" rel="noreferrer"
-                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-white shadow-sm transition
-                                ${p.checkout && p.checkout !== "#" ? "bg-black hover:opacity-90 active:scale-[0.99]" : "pointer-events-none opacity-60 bg-[--graphite-600]"}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`btn-primary justify-center ${p.checkout && p.checkout !== "#" ? "" : "btn-disabled"}`}
                     aria-disabled={!p.checkout || p.checkout === "#"}
                   >
                     <ShoppingBag size={16} />
                     {t.catalog.buy}
                   </a>
 
-                  <a href={mailtoHref} className="btn-outline justify-center">
+                  <a href={mailtoHref} className="btn-ghost justify-center">
                     {t.catalog.enquire}
                   </a>
                 </div>
@@ -389,15 +314,15 @@ export default function Page() {
       </section>
 
       {/* Portfolio */}
-      <section id="portfolio" className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="font-display text-2xl mb-6">{t.portfolio.title}</h2>
+      <section id="portfolio" className="section-anchor max-w-6xl mx-auto px-4 py-16">
+        <p className="kicker">Selected Work</p>
+        <h2 className="h-section mb-6">{t.portfolio.title}</h2>
         <div className="grid md:grid-cols-3 gap-6">
           {PROJECTS.map(pr => (
-            <motion.figure key={pr.id} initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:.6}}
-              className="rounded-3xl overflow-hidden border border-[--graphite-100] bg-white hover:shadow-lg transition">
+            <motion.figure key={pr.id} initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:.6}} className="card">
               <img src={pr.img} alt={pr.title[lang]} className="w-full h-56 object-cover"/>
               <figcaption className="p-4">
-                <div className="font-semibold">{pr.title[lang]}</div>
+                <div className="font-display text-[17px]">{pr.title[lang]}</div>
                 <div className="text-sm text-[--graphite-600] mt-1">{pr.desc[lang]}</div>
               </figcaption>
             </motion.figure>
@@ -406,40 +331,45 @@ export default function Page() {
       </section>
 
       {/* About */}
-      <section id="about" className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="font-display text-2xl mb-6">{t.about.title}</h2>
+      <section id="about" className="section-anchor max-w-6xl mx-auto px-4 py-16">
+        <p className="kicker">About</p>
+        <h2 className="h-section mb-6">{t.about.title}</h2>
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div className="rounded-3xl overflow-hidden shadow-md ring-1 ring-black/5">
             <img src="https://images.unsplash.com/photo-1520697222860-779f85a6a6cf?q=80&w=1200&auto=format&fit=crop" alt="Anguie portrait" className="w-full h-[340px] object-cover"/>
           </div>
-          <div>
-            <p className="text-[--graphite-600] leading-relaxed">{t.about.p1}</p>
-            <p className="text-[--graphite-600] leading-relaxed mt-4">{t.about.p2}</p>
+          <div className="text-[--graphite-600] leading-relaxed">
+            <p>{t.about.p1}</p>
+            <p className="mt-4">{t.about.p2}</p>
           </div>
         </div>
       </section>
 
       {/* Blog */}
-      <section id="blog" className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="font-display text-2xl mb-6">{t.blog.title}</h2>
-        <div className="rounded-3xl bg-white border border-[--graphite-100] p-8 text-[--graphite-600]">
+      <section id="blog" className="section-anchor max-w-6xl mx-auto px-4 py-16">
+        <p className="kicker">Journal</p>
+        <h2 className="h-section mb-6">{t.blog.title}</h2>
+        <div className="card p-8 text-[--graphite-600]">
           {t.blog.empty}
         </div>
       </section>
 
       {/* Contact */}
-      <section id="contact" className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="font-display text-2xl mb-6">{t.contact.title}</h2>
+      <section id="contact" className="section-anchor max-w-6xl mx-auto px-4 py-16">
+        <p className="kicker">{t.contact.title}</p>
+        <h2 className="h-section mb-6">{t.contact.title}</h2>
         <div className="grid md:grid-cols-2 gap-10">
-          <form onSubmit={(e)=>{e.preventDefault(); window.location.href = mailtoHref;}} className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
-            <div className="text-lg font-semibold mb-4">{t.contact.formTitle}</div>
+          <form onSubmit={(e)=>{e.preventDefault(); window.location.href = mailtoHref;}} className="card p-6">
+            <div className="text-lg font-display font-semibold mb-4">{t.contact.formTitle}</div>
             <input required placeholder={t.contact.name} className="input"/>
             <input required type="email" placeholder={t.contact.email} className="input"/>
             <textarea required placeholder={t.contact.msg} className="input h-32"/>
-            <button className="btn-dark">{t.contact.send}<ArrowRight size={16}/></button>
-            <div className="text-sm text-[--graphite-600] mt-3">{t.contact.alt} <a href={mailtoHref} className="underline">{SETTINGS.email}</a></div>
+            <button className="btn-primary">{t.contact.send}<ArrowRight size={16}/></button>
+            <div className="text-sm text-[--graphite-600] mt-3">
+              {t.contact.alt} <a href={mailtoHref} className="underline">{SETTINGS.email}</a>
+            </div>
           </form>
-          <div className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
+          <div className="card p-6">
             <div className="flex flex-col gap-3">
               <a className="inline-flex items-center gap-3" href={`tel:${SETTINGS.phone}`}><Phone size={18}/> {SETTINGS.phone}</a>
               <a className="inline-flex items-center gap-3" href={`mailto:${SETTINGS.email}`}><Mail size={18}/> {SETTINGS.email}</a>
@@ -452,9 +382,10 @@ export default function Page() {
       </section>
 
       {/* Fair / QR */}
-      <section id="fair" className="max-w-6xl mx-auto px-4 py-14">
-        <h2 className="font-display text-2xl mb-6">{t.fair.title}</h2>
-        <div className="grid md:grid-cols-2 gap-10 items-center bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-md">
+      <section id="fair" className="section-anchor max-w-6xl mx-auto px-4 py-16">
+        <p className="kicker">Pop-ups & Fairs</p>
+        <h2 className="h-section mb-6">{t.fair.title}</h2>
+        <div className="grid md:grid-cols-2 gap-10 items-center card p-8">
           <div className="justify-self-center">
             <QRCodeCanvas value={SETTINGS.siteUrl} size={220} bgColor="#ffffff" fgColor={COLORS.graphite900} includeMargin={true} />
           </div>
@@ -463,7 +394,7 @@ export default function Page() {
             <a
               href="#catalog"
               onClick={(e)=>{e.preventDefault(); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'});}}
-              className="btn-dark"
+              className="btn-primary"
             >
               {t.fair.cta} <ArrowRight size={16}/>
             </a>
