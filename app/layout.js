@@ -1,5 +1,26 @@
 // app/layout.js
 import "./globals.css";
+import localFont from "next/font/local";
+import { Poppins } from "next/font/google";
+
+export const viewport = {
+  themeColor: "#FFF7F2",
+};
+
+const recoleta = localFont({
+  src: "../public/fonts/recoleta-alt-semibold.otf", // asegúrate de que exista
+  weight: "600",
+  style: "normal",
+  variable: "--font-recoleta",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-poppins",
+});
 
 export const metadata = {
   metadataBase: new URL("https://heavenlyknits.com"),
@@ -19,6 +40,7 @@ export const metadata = {
     apple: [{ url: "/apple-touch-icon.png?v=3", sizes: "180x180" }],
     shortcut: ["/favicon.ico?v=3"],
   },
+  manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Heavenly Knits — Handmade with love",
     description:
@@ -35,23 +57,14 @@ export const metadata = {
     description: "Textiles & knits que se sienten como hogar.",
     images: ["/og-cover.jpg"],
   },
-  manifest: "/manifest.webmanifest",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Heavenly Knits",
-  },
-};
-
-// En Next 15, themeColor va en 'viewport'
-export const viewport = {
-  themeColor: "#FFF7F2",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${recoleta.variable} ${poppins.variable} font-sans`}>
+        {children}
+      </body>
     </html>
   );
 }
