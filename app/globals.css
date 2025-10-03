@@ -10,6 +10,7 @@
 body { background:var(--background); color:var(--foreground); font-family: Arial, Helvetica, sans-serif; }
 
 /* utilidades opcionales que usamos */
+/* utilidades que usa la página */
 .section-anchor { scroll-margin-top: 88px; }
 .btn-primary { @apply inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white shadow-sm hover:brightness-95 active:scale-[0.99] transition; }
 .btn-ghost   { @apply inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition; }
@@ -17,3 +18,4 @@ body { background:var(--background); color:var(--foreground); font-family: Arial
 .input       { @apply w-full border border-[--graphite-100] rounded-xl px-4 py-2 mb-3; }
 .card        { @apply bg-white rounded-3xl overflow-hidden shadow-md border border-[--graphite-100] flex flex-col; }
 .badge       { @apply absolute top-3 left-3 text-xs bg-white/90 rounded-full px-3 py-1 shadow; }
+
