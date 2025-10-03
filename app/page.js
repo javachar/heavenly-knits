@@ -1,145 +1,144 @@
 'use client';
-import React, { useMemo, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Languages, ShoppingBag } from 'lucide-react';
+import React, { useMemo, useState, useEffect } from "react";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
+import {
+  ShoppingBag, Phone, Mail, Instagram, Youtube,
+  ArrowRight, Languages, Sparkles, Palette
+} from "lucide-react";
+
+// Carga dinámica del QR para evitar errores en el prerender (build)
+const QRCodeCanvas = dynamic(
+  () => import("qrcode.react").then(m => m.QRCodeCanvas),
+  { ssr: false }
+);
 
 /* =========================
-   SETTINGS / TEXTOS
+   SETTINGS
 ========================= */
 const SETTINGS = {
-  brand: 'Heavenly Knits',
-  phone: '+1 (520) 527-8311',
-  email: 'hello.heavenlyknits@gmail.com',
-  instagram: 'https://www.instagram.com/heavenlyknits.co',
-  siteUrl: 'https://heavenlyknits.com',
-  shopAllUrl: '#catalog',         // cambia a tu colección
-  materialsUrl: '#catalog',       // cambia si tendrás página propia
-  coursesUrl: '#blog',            // cambia si tendrás página propia
+  brand: "Heavenly Knits",
+  taglineEN: "Handmade with love",
+  taglineES: "Hecho a mano con amor",
+  phone: "+1 (520) 527-8311",
+  email: "hello.heavenlyknits@gmail.com",
+  instagram: "https://www.instagram.com/heavenlyknits.co?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+  youtube: "https://www.youtube.com/@HeavenlyKnits",
+  siteUrl: "https://heavenlyknits.com",
 };
 
 const COLORS = {
-  pinkBrand: '#F6A3C0',
-  coral: '#FF8F70',
-  mango: '#FFB341',
-  bubblegum: '#FFA2B8',
-  raspberry: '#B12E5E',
-  ivory: '#FFF7F2',
-  graphite900: '#1E1E1E',
-  graphite600: '#565656',
-  graphite100: '#EDEDED',
+  pinkBrand: "#F6A3C0",
+  coral: "#FF8F70",
+  mango: "#FFB341",
+  bubblegum: "#FFA2B8",
+  raspberry: "#B12E5E",
+  ivory: "#FFF7F2",
+  graphite900: "#1E1E1E",
+  graphite600: "#565656",
+  graphite100: "#EDEDED",
 };
 
 const i18n = {
   en: {
-    nav: { shop: 'Shop', materials: 'Materials', courses: 'Courses', about: 'About' },
-    cta: 'VIEW ALL',
-    sections: {
-      kits: 'Kits',
-      materials: 'Materials',
-      courses: 'Courses',
-    },
-    insta: 'Instagram',
+    nav: { home: "Home", catalog: "Catalog", portfolio: "Portfolio", about: "About", blog: "Journal", contact: "Contact", fair: "Fair" },
+    hero: { title: "Textiles & Knits that feel like home.", ctaCatalog: "Explore Catalog", ctaPortfolio: "See Projects" },
+    catalog: { title: "Catalog", badge: "Made by Anguie", buy: "Buy", enquire: "Enquire", colors: "Colors", materials: "Materials", size: "Size" },
+    portfolio: { title: "Projects" },
+    about: { title: "About Anguie", p1: "Anguie is a Peruvian designer and visual artist based in Georgia. She creates delicate, colorful pieces using colorimetry to craft combinations that feel balanced and warm.", p2: "Heavenly Knits brings artisanal technique to modern living through thoughtful materials and detail." },
+    blog: { title: "Journal", empty: "Coming soon: tutorials, fair recaps, and behind the scenes." },
+    contact: { title: "Contact", formTitle: "Write us", name: "Name", email: "Email", msg: "Message", send: "Send", alt: "Or reach us at:" },
+    fair: { title: "Find us at the Fair", p: "Scan to open the site on your phone and explore the catalog.", cta: "Open Catalog" },
+    footer: { rights: "All rights reserved." },
+    lang: "ES"
   },
   es: {
-    nav: { shop: 'Tienda', materials: 'Materiales', courses: 'Cursos', about: 'Acerca' },
-    cta: 'VER TODOS',
-    sections: {
-      kits: 'Kits',
-      materials: 'Materiales',
-      courses: 'Cursos',
-    },
-    insta: 'Instagram',
-  },
+    nav: { home: "Inicio", catalog: "Catálogo", portfolio: "Portafolio", about: "Acerca", blog: "Blog", contact: "Contacto", fair: "Feria" },
+    hero: { title: "Textiles y tejidos que se sienten como hogar.", ctaCatalog: "Ver catálogo", ctaPortfolio: "Ver proyectos" },
+    catalog: { title: "Catálogo", badge: "Hecho por Anguie", buy: "Comprar", enquire: "Encargar", colors: "Colores", materials: "Materiales", size: "Tamaño" },
+    portfolio: { title: "Proyectos" },
+    about: { title: "Sobre Anguie", p1: "Anguie es diseñadora y artista visual peruana radicada en Georgia. Crea piezas delicadas y coloridas aplicando colorimetría para lograr combinaciones equilibradas y cálidas.", p2: "Heavenly Knits acerca la técnica artesanal a la vida moderna con materiales y detalles pensados." },
+    blog: { title: "Blog", empty: "Muy pronto: tutoriales, crónicas de ferias y detrás de cámaras." },
+    contact: { title: "Contacto", formTitle: "Escríbenos", name: "Nombre", email: "Correo", msg: "Mensaje", send: "Enviar", alt: "O contáctanos en:" },
+    fair: { title: "Encuéntranos en la feria", p: "Escanea para abrir el sitio en tu celular y explorar el catálogo.", cta: "Abrir catálogo" },
+    footer: { rights: "Todos los derechos reservados." },
+    lang: "EN"
+  }
 };
+
+/* =========================
+   DATA
+========================= */
+const PRODUCTS = [
+  {
+    id: "hk-001",
+    name: { en: "Embroidery Kit – Spring Garden", es: "Kit de Bordado – Jardín de Primavera" },
+    price: "$32",
+    img: "/images/blusa-rose.png",
+    colors: ["Coral", "Mango", "Ivory"],
+    materials: "Cotton thread, bamboo hoop, linen fabric",
+    size: "8 in / 20 cm",
+    checkout: "https://1f20zv-41.myshopify.com/cart/44864343212089:1?channel=buy_button",
+  },
+  {
+    id: "hk-002",
+    name: { en: "Crochet Cover – Mini Planter", es: "Funda de Crochet – Macetero Mini" },
+    price: "$18",
+    img: "https://images.unsplash.com/photo-1598023696416-0193a0bcd39b?q=80&w=1200&auto=format&fit=crop",
+    colors: ["Bubblegum", "Mint", "Raspberry"],
+    materials: "Recycled cotton yarn",
+    size: "Ø 9–10 cm",
+    checkout: "#",
+  },
+  {
+    id: "hk-003",
+    name: { en: "Embroidery Threads – Colorimetry Set", es: "Hilos de Bordado – Set Colorimetría" },
+    price: "$24",
+    img: "https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop",
+    colors: ["Raspberry", "Pink", "Ivory"],
+    materials: "100% cotton – 12 colors",
+    size: "12 × 8 m skeins",
+    checkout: "#",
+  }
+];
+
+const PROJECTS = [
+  {
+    id: "p-01",
+    title: { en: "Botanical Series", es: "Serie Botánica" },
+    img: "https://images.unsplash.com/photo-1504194104404-433180773017?q=80&w=1200&auto=format&fit=crop",
+    desc: { en: "Textures and layered stitches inspired by gardens.", es: "Texturas y puntadas en capas inspiradas en jardines." }
+  },
+  {
+    id: "p-02",
+    title: { en: "Homes & Memories", es: "Hogares y Memorias" },
+    img: "https://images.unsplash.com/photo-1520975922284-7b683fe621b9?q=80&w=1200&auto=format&fit=crop",
+    desc: { en: "Custom pieces for warm interiors.", es: "Piezas a medida para interiores cálidos." }
+  },
+  {
+    id: "p-03",
+    title: { en: "Colorimetry Studies", es: "Estudios de Colorimetría" },
+    img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
+    desc: { en: "Balanced, feminine palettes for textiles.", es: "Paletas equilibradas y femeninas para textiles." }
+  }
+];
 
 /* =========================
    HELPERS
 ========================= */
 const scrollToId = (id) => {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
-
-const SafeImage = ({ src, alt, className, fallback }) => (
-  <img
-    src={src}
-    onError={(e) => {
-      if (fallback) e.currentTarget.src = fallback;
-    }}
-    alt={alt}
-    className={className}
-    loading="lazy"
-  />
-);
-
-/* Sello “flor/estallido” estilo StayCrafty (simple) */
-const BurstButton = ({ href, label }) => (
-  <a
-    href={href}
-    className="relative inline-grid place-items-center text-white font-semibold font-ui"
-    style={{
-      width: 108,
-      height: 108,
-      backgroundColor: '#0A7A2A', // verde badge
-      clipPath:
-        'path("M54 0C59.5 7 67 9 74 13C81 17 84 26 91 31C98 36 108 37 112 44C116 51 114 60 116 68C118 76 124 83 122 91C120 99 112 104 106 110C100 116 97 125 89 128C81 131 72 128 64 130C56 132 48 138 40 136C32 134 27 126 20 121C13 116 3 114 1 106C-1 98 4 90 6 82C8 74 6 65 10 58C14 51 22 48 28 42C34 36 38 27 46 23C54 19 62 21 70 19C78 17 88 11 94 14C100 17 102 26 108 31C114 36 124 38 126 46C128 54 123 63 121 71C119 79 121 88 117 95C113 102 105 105 99 111C93 117 89 126 81 129C73 132 64 129 56 131C48 133 40 139 32 137C24 135 19 127 12 122C5 117 -5 115 -7 107C-9 99 -4 91 -2 83C0 75 -2 66 2 59C6 52 14 49 20 43C26 37 30 28 38 24C46 20 54 22 62 20C70 18 80 12 86 15C92 18 94 27 100 32C106 37 116 39 118 47C120 55 115 64 113 72C111 80 113 89 109 96C105 103 97 106 91 112C85 118 81 127 73 130C65 133 56 130 48 132C40 134 32 140 24 138C16 136 11 128 4 123C-3 118 -13 116 -15 108C-17 100 -12 92 -10 84C-8 76 -10 67 -6 60C-2 53 6 50 12 44C18 38 22 29 30 25C38 21 46 23 54 21C62 19 72 13 78 16C84 19 86 28 92 33C98 38 108 40 110 48C112 56 107 65 105 73C103 81 105 90 101 97C97 104 89 107 83 113C77 119 73 128 65 131C57 134 48 131 40 133C32 135 24 141 16 139C8 137 3 129 -4 124C-11 119 -21 117 -23 109C-25 101 -20 93 -18 85C-16 77 -18 68 -14 61C-10 54 -2 51 4 45C10 39 14 30 22 26C30 22 38 24 46 22C54 20 64 14 70 17C76 20 78 29 84 34C90 39 100 41 102 49C104 57 99 66 97 74C95 82 97 91 93 98C89 105 81 108 75 114C69 120 65 129 57 132C49 135 40 132 32 134C24 136 16 142 8 140C0 138 -5 130 -12 125 -19 120 -29 118 -31 110 -33 102 -28 94 -26 86 -24 78 -26 69 -22 62 -18 55 -10 52 -4 46 2 40 6 31 14 27 22 23 30 25 38 23 46 21 54 13 54 0Z")',
-    }}
-  >
-    <span className="text-[11px] leading-tight text-center px-3">{label}</span>
-  </a>
-);
-
-/* Sección tipo “lámina” a pantalla completa */
-const Billboard = ({
-  id,
-  image,
-  title,
-  ctaHref,
-  ctaLabel,
-  align = 'right', // 'left' | 'right'
-}) => (
-  <section id={id} className="relative min-h-screen w-full overflow-hidden">
-    <SafeImage
-      src={image}
-      alt={title}
-      className="absolute inset-0 w-full h-full object-cover"
-      fallback="https://images.unsplash.com/photo-1520975922284-7b683fe621b9?q=80&w=1600&auto=format&fit=crop"
-    />
-    {/* Borde superior e inferior con “papel” tenue */}
-    <div className="absolute top-0 left-0 right-0 h-2 bg-[--ivory]/70" />
-    <div className="absolute bottom-0 left-0 right-0 h-2 bg-[--ivory]/70" />
-
-    <div
-      className={`relative z-10 max-w-7xl mx-auto px-6 sm:px-8 md:px-10 h-screen flex items-center ${
-        align === 'right' ? 'justify-end' : 'justify-start'
-      }`}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className={`text-[--graphite-900] ${
-          align === 'right' ? 'text-right items-end' : 'text-left items-start'
-        } flex flex-col gap-5`}
-      >
-        <h2 className="font-display huge drop-shadow-[0_1px_0_rgba(255,255,255,.6)]">
-          {title}
-        </h2>
-        <BurstButton href={ctaHref} label={ctaLabel} />
-      </motion.div>
-    </div>
-  </section>
-);
 
 /* =========================
    PAGE
 ========================= */
 export default function Page() {
-  const [lang, setLang] = useState<'en' | 'es'>('es');
+  const [lang, setLang] = useState("en");
   const t = i18n[lang];
 
-  // header sólido al hacer scroll
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -148,169 +147,312 @@ export default function Page() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const bgGradient = `linear-gradient(
+    135deg,
+    color-mix(in srgb, ${COLORS.pinkBrand} 35%, white 65%) 0%,
+    color-mix(in srgb, ${COLORS.coral} 35%, white 65%) 55%,
+    color-mix(in srgb, ${COLORS.bubblegum} 30%, white 70%) 100%
+  )`;
+
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`${SETTINGS.brand} — Enquiry`);
     return `mailto:${SETTINGS.email}?subject=${subject}`;
   }, []);
 
+  const navItems = [
+    ["home", t.nav.home],
+    ["catalog", t.nav.catalog],
+    ["portfolio", t.nav.portfolio],
+    ["about", t.nav.about],
+    ["blog", t.nav.blog],
+    ["contact", t.nav.contact],
+    ["fair", t.nav.fair],
+  ];
+
   return (
-    <div className="min-h-screen bg-[--ivory] text-[--graphite-900] font-ui">
+    <div className="min-h-screen bg-[--ivory] text-[--graphite-900]">
       <style>{`
-        :root{
-          --pink:${COLORS.pinkBrand};
-          --coral:${COLORS.coral};
-          --mango:${COLORS.mango};
-          --bubblegum:${COLORS.bubblegum};
-          --raspberry:${COLORS.raspberry};
-          --ivory:${COLORS.ivory};
-          --graphite-900:${COLORS.graphite900};
-          --graphite-600:${COLORS.graphite600};
-          --graphite-100:${COLORS.graphite100};
-          --font-display:'Recoleta Alt Semibold','Times New Roman',serif;
-          --font-ui:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Apple Color Emoji','Segoe UI Emoji',sans-serif;
+        :root {
+          --pink: ${COLORS.pinkBrand};
+          --coral: ${COLORS.coral};
+          --mango: ${COLORS.mango};
+          --bubblegum: ${COLORS.bubblegum};
+          --raspberry: ${COLORS.raspberry};
+          --ivory: ${COLORS.ivory};
+          --graphite-900: ${COLORS.graphite900};
+          --graphite-600: ${COLORS.graphite600};
+          --graphite-100: ${COLORS.graphite100};
         }
       `}</style>
 
-      {/* HEADER estilo StayCrafty (logo centrado) */}
+      {/* Header */}
       <header
-        className={`sticky top-0 z-50 transition-all duration-200 ${
-          scrolled ? 'bg-white/95 shadow-sm' : 'bg-white/70 backdrop-blur'
-        }`}
+        className={`sticky top-0 z-50 transition-all duration-200
+          ${scrolled ? "bg-white/95 shadow-sm" : "bg-white/70 backdrop-blur border-b border-[--graphite-100]"}`}
       >
-        <div className="max-w-7xl mx-auto h-16 px-4 flex items-center justify-between relative">
-          {/* Nav izquierda */}
-          <nav className="hidden md:flex items-center gap-6 text-[13px] uppercase tracking-wide">
-            <button onClick={() => scrollToId('kits')} className="hover:opacity-80">
-              {t.nav.shop}
-            </button>
-            <button onClick={() => scrollToId('materials')} className="hover:opacity-80">
-              {t.nav.materials}
-            </button>
-            <button onClick={() => scrollToId('courses')} className="hover:opacity-80">
-              {t.nav.courses}
-            </button>
-          </nav>
-
-          {/* Logo centro absoluto */}
-          <a
-            href="#hero"
-            className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2"
-            aria-label="Heavenly Knits — Home"
-          >
-            <img src="/images/logo.png" alt="Heavenly Knits" className="h-8 w-auto" />
+        <div className="max-w-6xl mx-auto h-14 px-4 flex items-center gap-4">
+          <a href="#home" className="flex items-center gap-3 shrink-0">
+            <Image
+              src="/images/logo.png"
+              alt="Heavenly Knits"
+              width={112}
+              height={28}
+              priority
+              className="h-7 w-auto"
+            />
+            <span className="font-black tracking-tight">{SETTINGS.brand}</span>
           </a>
 
-          {/* Acciones derecha */}
-          <div className="flex items-center gap-3 ml-auto">
-            <button
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[--graphite-100] text-sm hover:bg-[--graphite-100]"
-              onClick={() => setLang((p) => (p === 'en' ? 'es' : 'en'))}
-              aria-label="Toggle language"
-            >
-              <Languages size={16} /> {lang === 'en' ? 'ES' : 'EN'}
-            </button>
-            <a
-              href={SETTINGS.shopAllUrl}
-              className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[--raspberry] text-white text-sm hover:brightness-95"
-            >
-              <ShoppingBag size={16} /> {t.nav.shop}
-            </a>
+          <nav className="hidden md:flex items-center gap-6 text-[12.5px] uppercase tracking-wide mx-auto">
+            {navItems.map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => scrollToId(id)}
+                className="relative text-[--graphite-600] hover:text-[--graphite-900]
+                           after:absolute after:left-0 after:-bottom-1 after:h-[2px]
+                           after:w-0 after:bg-[--graphite-900] hover:after:w-full after:transition-all"
+              >
+                {label}
+              </button>
+            ))}
+          </nav>
+
+          <button
+            className="ml-auto md:ml-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+                       border border-[--graphite-100] text-sm hover:bg-[--graphite-100]"
+            onClick={() => setLang(prev => prev === 'en' ? 'es' : 'en')}
+            aria-label="Toggle language"
+          >
+            <Languages size={16} /> {t.lang}
+          </button>
+        </div>
+
+        <div className="md:hidden overflow-x-auto px-4 pb-2 -mt-1">
+          <div className="flex gap-5 text-[13px] uppercase tracking-wide text-[--graphite-600]">
+            {navItems.map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => scrollToId(id)}
+                className="relative pb-1 hover:text-[--graphite-900]
+                           after:absolute after:left-0 after:-bottom-0.5 after:h-[2px]
+                           after:w-0 after:bg-[--graphite-900] hover:after:w-full after:transition-all"
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </header>
 
-      {/* HERO pantalla completa con logo al centro */}
-      <section id="hero" className="relative min-h-screen w-full overflow-hidden">
-        <SafeImage
-          src="/images/hero.jpg"
-          alt="Heavenly Knits"
-          className="absolute inset-0 w-full h-full object-cover"
-          fallback="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1600&auto=format&fit=crop"
-        />
-        {/* Logo marca centrado */}
-        <div className="relative z-10 grid place-items-center h-screen">
-          <img
-            src="/images/logo-white.png"
-            onError={(e) => {
-              // si no hay logo blanco, usamos el normal con un fondo claro
-              e.currentTarget.src = '/images/logo.png';
-            }}
-            alt="Heavenly Knits"
-            className="w-[220px] sm:w-[260px] md:w-[300px] drop-shadow-[0_2px_12px_rgba(0,0,0,.25)]"
-          />
+      {/* Hero */}
+      <section id="home" className="relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ background: bgGradient }} />
+        <div className="max-w-6xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-10 items-center">
+          <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6}}>
+            <h1 className="text-4xl md:text-5xl font-black leading-tight">
+              {t.hero.title}
+            </h1>
+            <p className="mt-4 text-[--graphite-600]">
+              {lang==='en'
+                ? 'Colorimetry-driven palettes, feminine details, and artisanal technique.'
+                : 'Paletas guiadas por colorimetría, detalles femeninos y técnica artesanal.'}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button
+                onClick={() => scrollToId('catalog')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white shadow-sm hover:brightness-95 active:scale-[0.99] transition"
+              >
+                <ShoppingBag size={18}/>{t.hero.ctaCatalog}
+              </button>
+              <button
+                onClick={() => scrollToId('portfolio')}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition"
+              >
+                <Sparkles size={18}/>{t.hero.ctaPortfolio}
+              </button>
+            </div>
+          </motion.div>
+
+          <motion.div initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.6, delay:.1}} className="md:justify-self-end">
+            <div className="rounded-3xl overflow-hidden shadow-xl ring-1 ring-black/5">
+              <div className="relative w-full h-[360px]">
+                <Image
+                  src="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1400&auto=format&fit=crop"
+                  alt="Heavenly Knits"
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 560px, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* BILLBOARDS tipo StayCrafty */}
-      <Billboard
-        id="kits"
-        image="/images/kits.jpg"
-        title={t.sections.kits}
-        ctaHref={SETTINGS.shopAllUrl}
-        ctaLabel={t.cta}
-        align="right"
-      />
+      {/* Catalog */}
+      <section id="catalog" className="max-w-6xl mx-auto px-4 py-16">
+        <div className="flex items-center gap-2 mb-6">
+          <Palette size={18} className="text-[--raspberry]"/>
+          <h2 className="text-2xl font-black">{t.catalog.title}</h2>
+        </div>
 
-      <Billboard
-        id="materials"
-        image="/images/materials.jpg"
-        title={t.sections.materials}
-        ctaHref={SETTINGS.materialsUrl}
-        ctaLabel={t.cta}
-        align="left"
-      />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {PRODUCTS.map(p => (
+            <motion.article key={p.id} initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}} viewport={{once:true}} transition={{duration:.4}} className="card">
+              <div className="relative">
+                <div className="relative w-full h-56">
+                  <Image
+                    src={p.img}
+                    alt={p.name[lang]}
+                    fill
+                    sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <span className="badge">{t.catalog.badge}</span>
+              </div>
+              <div className="p-4 flex-1 flex flex-col">
+                <h3 className="font-bold text-lg">{p.name[lang]}</h3>
+                <div className="text-[--graphite-600] mt-1">{p.price}</div>
+                <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                  <div><span className="font-semibold">{t.catalog.colors}:</span> {p.colors.join(', ')}</div>
+                  <div className="col-span-2"><span className="font-semibold">{t.catalog.materials}:</span> {p.materials}</div>
+                </div>
 
-      <Billboard
-        id="courses"
-        image="/images/courses.jpg"
-        title={t.sections.courses}
-        ctaHref={SETTINGS.coursesUrl}
-        ctaLabel={t.cta}
-        align="right"
-      />
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <a
+                    href={p.checkout && p.checkout !== "#" ? p.checkout : undefined}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl text-white shadow-sm transition
+                                ${p.checkout && p.checkout !== "#" ? "bg-[--raspberry] hover:brightness-95 active:scale-[0.99]" : "bg-[--graphite-600] opacity-60 cursor-not-allowed"}`}
+                    aria-disabled={!p.checkout || p.checkout === "#"}
+                  >
+                    <ShoppingBag size={16} />
+                    {t.catalog.buy}
+                  </a>
 
-      {/* INSTAGRAM GRID */}
-      <section id="instagram" className="py-14 bg-[--ivory]">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-10">
-          <h3 className="font-display text-[38px] sm:text-[48px] md:text-[56px] leading-none mb-6">
-            {t.insta}
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-            {[
-              { href: SETTINGS.instagram, img: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=800&auto=format&fit=crop' },
-              { href: SETTINGS.instagram, img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop' },
-              { href: SETTINGS.instagram, img: 'https://images.unsplash.com/photo-1504194104404-433180773017?q=80&w=800&auto=format&fit=crop' },
-              { href: SETTINGS.instagram, img: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=800&auto=format&fit=crop' },
-              { href: SETTINGS.instagram, img: 'https://images.unsplash.com/photo-1520975922284-7b683fe621b9?q=80&w=800&auto=format&fit=crop' },
-              { href: SETTINGS.instagram, img: 'https://images.unsplash.com/photo-1551298370-9d3d53740c43?q=80&w=800&auto=format&fit=crop' },
-            ].map((it, i) => (
-              <a
-                key={i}
-                href={it.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group relative rounded-2xl overflow-hidden border border-[--graphite-100] bg-white"
-                aria-label="Open Instagram"
-              >
-                <img
-                  src={it.img}
-                  alt="Instagram"
-                  className="w-full h-48 md:h-64 object-cover group-hover:scale-105 transition"
-                  loading="lazy"
+                  <a
+                    href={mailtoHref}
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition"
+                  >
+                    {t.catalog.enquire}
+                  </a>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </section>
+
+      {/* Portfolio */}
+      <section id="portfolio" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl font-black mb-6">{t.portfolio.title}</h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {PROJECTS.map(pr => (
+            <motion.figure key={pr.id} initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:.6}} className="rounded-3xl overflow-hidden shadow-md border border-[--graphite-100] bg-white">
+              <div className="relative w-full h-56">
+                <Image
+                  src={pr.img}
+                  alt={pr.title[lang]}
+                  fill
+                  sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+                  className="object-cover"
                 />
-              </a>
-            ))}
+              </div>
+              <figcaption className="p-4">
+                <div className="font-semibold">{pr.title[lang]}</div>
+                <div className="text-sm text-[--graphite-600] mt-1">{pr.desc[lang]}</div>
+              </figcaption>
+            </motion.figure>
+          ))}
+        </div>
+      </section>
+
+      {/* About */}
+      <section id="about" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl font-black mb-6">{t.about.title}</h2>
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div className="rounded-3xl overflow-hidden shadow-md ring-1 ring-black/5">
+            <div className="relative w-full h-[340px]">
+              <Image
+                src="https://images.unsplash.com/photo-1520697222860-779f85a6a6cf?q=80&w=1200&auto=format&fit=crop"
+                alt="Anguie portrait"
+                fill
+                sizes="(min-width:768px) 560px, 100vw"
+                className="object-cover"
+              />
+            </div>
+          </div>
+          <div>
+            <p className="text-[--graphite-600] leading-relaxed">{t.about.p1}</p>
+            <p className="text-[--graphite-600] leading-relaxed mt-4">{t.about.p2}</p>
           </div>
         </div>
       </section>
 
-      {/* FOOTER mínimo */}
-      <footer className="border-t border-[--graphite-100] py-8">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-10 text-sm text-[--graphite-600] flex flex-col md:flex-row items-center justify-between gap-3">
-          <div>© {new Date().getFullYear()} {SETTINGS.brand}. All rights reserved.</div>
-          <div className="flex items-center gap-4">
-            <a className="hover:underline" href={mailtoHref}>Contact</a>
-            <a className="hover:underline" href={SETTINGS.instagram} target="_blank" rel="noreferrer">Instagram</a>
+      {/* Blog */}
+      <section id="blog" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl font-black mb-6">{t.blog.title}</h2>
+        <div className="rounded-3xl bg-white border border-[--graphite-100] p-8 text-[--graphite-600]">
+          {t.blog.empty}
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl font-black mb-6">{t.contact.title}</h2>
+        <div className="grid md:grid-cols-2 gap-10">
+          <form onSubmit={(e)=>{e.preventDefault(); window.location.href = mailtoHref;}} className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
+            <div className="text-lg font-semibold mb-4">{t.contact.formTitle}</div>
+            <input required placeholder={t.contact.name} className="w-full border border-[--graphite-100] rounded-xl px-4 py-2 mb-3"/>
+            <input required type="email" placeholder={t.contact.email} className="w-full border border-[--graphite-100] rounded-xl px-4 py-2 mb-3"/>
+            <textarea required placeholder={t.contact.msg} className="w-full border border-[--graphite-100] rounded-xl px-4 py-2 mb-3 h-32"/>
+            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:brightness-95 active:scale-[0.99] transition">
+              {t.contact.send}<ArrowRight size={16}/>
+            </button>
+            <div className="text-sm text-[--graphite-600] mt-3">{t.contact.alt} <a href={mailtoHref} className="underline">{SETTINGS.email}</a></div>
+          </form>
+          <div className="bg-white border border-[--graphite-100] rounded-3xl p-6 shadow-md">
+            <div className="flex flex-col gap-3">
+              <a className="inline-flex items-center gap-3" href={`tel:${SETTINGS.phone}`}><Phone size={18}/> {SETTINGS.phone}</a>
+              <a className="inline-flex items-center gap-3" href={`mailto:${SETTINGS.email}`}><Mail size={18}/> {SETTINGS.email}</a>
+              <a className="inline-flex items-center gap-3" href={SETTINGS.instagram} target="_blank" rel="noreferrer"><Instagram size={18}/> Instagram</a>
+              <a className="inline-flex items-center gap-3" href={SETTINGS.youtube} target="_blank" rel="noreferrer"><Youtube size={18}/> YouTube</a>
+              <p className="text-sm text-[--graphite-600]">{lang==='en' ? 'Based in Atlanta, GA' : 'Con base en Atlanta, GA'}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Fair / QR */}
+      <section id="fair" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl font-black mb-6">{t.fair.title}</h2>
+        <div className="grid md:grid-cols-2 gap-10 items-center bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-md">
+          <div className="justify-self-center">
+            <QRCodeCanvas value={SETTINGS.siteUrl} size={220} bgColor="#ffffff" fgColor={COLORS.graphite900} includeMargin={true} />
+          </div>
+          <div>
+            <p className="text-[--graphite-600] mb-4">{t.fair.p}</p>
+            <a
+              href="#catalog"
+              onClick={(e)=>{e.preventDefault(); document.getElementById('catalog')?.scrollIntoView({behavior:'smooth'});}}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[--raspberry] text-white hover:brightness-95 active:scale-[0.99] transition"
+            >
+              {t.fair.cta} <ArrowRight size={16}/>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-[--graphite-100] py-10">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="text-sm text-[--graphite-600]">© {new Date().getFullYear()} {SETTINGS.brand}. {t.footer.rights}</div>
+          <div className="flex items-center gap-4 text-sm">
+            <a href="#" className="hover:underline">Privacy</a>
+            <a href="#" className="hover:underline">Terms</a>
           </div>
         </div>
       </footer>

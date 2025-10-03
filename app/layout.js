@@ -1,22 +1,5 @@
 // app/layout.js
 import "./globals.css";
-import localFont from "next/font/local";
-import { Poppins } from "next/font/google";
-
-const recoleta = localFont({
-  src: "/fonts/recoleta-alt-semibold.otf",
-  variable: "--font-display",
-  weight: "600",
-  style: "normal",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const metadata = {
   metadataBase: new URL("https://heavenlyknits.com"),
@@ -53,7 +36,6 @@ export const metadata = {
     images: ["/og-cover.jpg"],
   },
   manifest: "/manifest.webmanifest",
-  themeColor: "#FFF7F2",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -61,9 +43,14 @@ export const metadata = {
   },
 };
 
+// En Next 15, themeColor va en 'viewport'
+export const viewport = {
+  themeColor: "#FFF7F2",
+};
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${recoleta.variable} ${poppins.variable}`}>
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
