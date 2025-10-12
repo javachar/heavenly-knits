@@ -39,6 +39,16 @@ export const viewport = { themeColor: "#FFF7F2" };
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${recoleta.variable} ${poppins.variable}`}>
+      <head>
+        {/* Precarga del logo (WebP) para que aparezca instantáneo al salir del splash */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/logo-white.webp"
+          type="image/webp"
+          fetchpriority="high"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

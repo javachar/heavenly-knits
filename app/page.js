@@ -358,13 +358,17 @@ export default function Page() {
           className="relative w-[240px] sm:w-[320px] md:w-[420px] lg:w-[520px] aspect-square"
         >
           <Image
-            src="/images/logo-white.png"
+            src="/images/logo-white.webp"
             alt="Heavenly Knits"
             fill
             priority
+            fetchPriority="high"
+            loading="eager"
+            decoding="sync"
             className="object-contain"
             sizes="(max-width: 640px) 240px, (max-width: 768px) 320px, (max-width: 1024px) 420px, 520px"
           />
+
         </motion.div>
       </section>
 
@@ -600,11 +604,15 @@ export default function Page() {
           {/* logo encima */}
           <div className="relative w-[360px] sm:w-[420px] aspect-[1.8/1] z-10">
             <Image
-              src="/images/logo-white.png"
+              src="/images/logo-white.webp"
               alt="Heavenly Knits"
               fill
+              priority
+              decoding="sync"
               className="object-contain drop-shadow"
+              sizes="(max-width: 640px) 360px, (max-width: 768px) 420px, 420px"
             />
+
           </div>
         </div>
       </div>
