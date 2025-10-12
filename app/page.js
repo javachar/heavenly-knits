@@ -3,11 +3,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ShoppingBag, Phone, Mail, Instagram as InstaIcon, Youtube,
-  ArrowRight, Languages, Sparkles, Palette
+  ArrowRight, Languages, Palette
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import Image from "next/image";
-
 
 /* =========================
    SETTINGS
@@ -35,15 +34,10 @@ const COLORS = {
   graphite100: "#EDEDED",
 };
 
-/* ========= INSTAGRAM =========
-   mode: "embeds" | "grid"
-   - embeds: consulta a /api/instagram y muestra <blockquote> oficiales
-   - grid: usa imágenes locales con links (no tokens)
-================================*/
+/* ========= INSTAGRAM ========= */
 const INSTAGRAM = {
   handle: "heavenlyknits.co",
-  mode: "embeds", // <-- dejamos EMBEDS por defecto como pediste
-  // solo usado si cambias a "grid":
+  mode: "embeds",
   grid: [
     { href: "https://www.instagram.com/heavenlyknits.co/", img: "/ig/1.jpg", alt: "Heavenly Knits 1" },
     { href: "https://www.instagram.com/heavenlyknits.co/", img: "/ig/2.jpg", alt: "Heavenly Knits 2" },
@@ -60,7 +54,6 @@ const INSTAGRAM = {
 const i18n = {
   en: {
     nav: { home: "Home", catalog: "Catalog", portfolio: "Portfolio", about: "About", blog: "Journal", contact: "Contact", fair: "Fair", instagram: "Instagram" },
-    hero: { title: "Textiles & Knits that feel like home.", ctaCatalog: "Explore Catalog", ctaPortfolio: "See Projects" },
     catalog: { title: "Catalog", badge: "Made by Anguie", buy: "Buy", enquire: "Enquire", colors: "Colors", materials: "Materials", size: "Size" },
     portfolio: { title: "Projects" },
     about: { title: "About Anguie", p1: "Anguie is a Peruvian designer and visual artist based in Georgia. She creates delicate, colorful pieces using colorimetry to craft combinations that feel balanced and warm.", p2: "Heavenly Knits brings artisanal technique to modern living through thoughtful materials and detail." },
@@ -73,7 +66,6 @@ const i18n = {
   },
   es: {
     nav: { home: "Inicio", catalog: "Catálogo", portfolio: "Portafolio", about: "Acerca", blog: "Blog", contact: "Contacto", fair: "Feria", instagram: "Instagram" },
-    hero: { title: "Textiles y tejidos que se sienten como hogar.", ctaCatalog: "Ver catálogo", ctaPortfolio: "Ver proyectos" },
     catalog: { title: "Catálogo", badge: "Hecho por Anguie", buy: "Comprar", enquire: "Encargar", colors: "Colores", materials: "Materiales", size: "Tamaño" },
     portfolio: { title: "Proyectos" },
     about: { title: "Sobre Anguie", p1: "Anguie es diseñadora y artista visual peruana radicada en Georgia. Crea piezas delicadas y coloridas aplicando colorimetría para lograr combinaciones equilibradas y cálidas.", p2: "Heavenly Knits acerca la técnica artesanal a la vida moderna con materiales y detalles pensados." },
@@ -87,7 +79,7 @@ const i18n = {
 };
 
 /* =========================
-   DATA (productos / proyectos)
+   DATA
 ========================= */
 const PRODUCTS = [
   {
@@ -157,7 +149,6 @@ const scrollToId = (id) => {
 function InstagramEmbeds({ urls = [] }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // Carga el script oficial si no está
     const existing = document.querySelector('script[src="https://www.instagram.com/embed.js"]');
     if (!existing) {
       const s = document.createElement("script");
@@ -230,7 +221,7 @@ export default function Page() {
   const [lang, setLang] = useState("en");
   const t = i18n[lang];
 
-  // Header con sombra
+  // Header sombra
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -239,10 +230,9 @@ export default function Page() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Instagram
   const [embedUrls, setEmbedUrls] = useState([]);
   const [igError, setIgError] = useState("");
-
-  // Fetch dinámico de últimos 9
   useEffect(() => {
     if (INSTAGRAM.mode !== "embeds") return;
     (async () => {
@@ -250,31 +240,24 @@ export default function Page() {
         const res = await fetch("/api/instagram", { cache: "no-store" });
         const json = await res.json();
         if (res.ok) {
-          const urls = (json.data || [])
-            .map((m) => m.permalink)
-            .filter(Boolean);
+          const urls = (json.data || []).map(m => m.permalink).filter(Boolean);
           setEmbedUrls(urls);
         } else {
           setIgError(json?.error || "Instagram API error");
         }
-      } catch (e) {
+      } catch {
         setIgError("No se pudo cargar Instagram.");
       }
     })();
   }, []);
 
-  const bgGradient = `linear-gradient(
-    135deg,
-    color-mix(in srgb, ${COLORS.pinkBrand} 35%, white 65%) 0%,
-    color-mix(in srgb, ${COLORS.coral} 35%, white 65%) 55%,
-    color-mix(in srgb, ${COLORS.bubblegum} 30%, white 70%) 100%
-  )`;
-
+  // Mailto
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`${SETTINGS.brand} — Enquiry`);
     return `mailto:${SETTINGS.email}?subject=${subject}`;
   }, []);
 
+  // Items nav
   const navItems = [
     ["home", t.nav.home],
     ["catalog", t.nav.catalog],
@@ -286,57 +269,76 @@ export default function Page() {
     ["instagram", t.nav.instagram],
   ];
 
-  return (
-    <div className="min-h-screen bg-[--ivory] text-[--graphite-900]">
-      <style>{`
-        :root {
-          --pink: ${COLORS.pinkBrand};
-          --coral: ${COLORS.coral};
-          --mango: ${COLORS.mango};
-          --bubblegum: ${COLORS.bubblegum};
-          --raspberry: ${COLORS.raspberry};
-          --ivory: ${COLORS.ivory};
-          --graphite-900: ${COLORS.graphite900};
-          --graphite-600: ${COLORS.graphite600};
-          --graphite-100: ${COLORS.graphite100};
-        }
-      `}</style>
+  // ===== Splash control: solo splash blanco y luego la página aparece =====
+  const [booting, setBooting] = useState(true);
+  useEffect(() => {
+    const tmr = setTimeout(() => setBooting(false), 1500);
+    return () => clearTimeout(tmr);
+  }, []);
 
-      {/* Header */}
-      <header className={`sticky top-0 z-50 transition-all duration-200
-          ${scrolled ? "bg-white/95 shadow-sm" : "bg-white/70 backdrop-blur border-b border-[--graphite-100]"}`}>
-        <div className="max-w-6xl mx-auto h-14 px-4 flex items-center gap-4">
+  if (booting) {
+    return (
+      <div className="fixed inset-0 z-[9999] grid place-items-center bg-white">
+        <div className="splash-loader" aria-hidden="true">
+          <span className="ring ring-hero"></span>
+          <span className="dot dot-hero"></span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="min-h-screen bg-[--ivory] text-[--graphite-900]"
+    >
+      {/* ===== HEADER ===== */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-200
+          ${scrolled ? "bg-white/60 backdrop-blur-md shadow-sm" : "bg-white/30 backdrop-blur-md"}`}
+      >
+        <div className="max-w-6xl mx-auto h-16 px-4 flex items-center gap-4">
           <a href="#home" className="flex items-center gap-3 shrink-0">
-            <img src="/images/logo.png" alt="Heavenly Knits" className="h-7 w-auto" />
-            <span className="font-black tracking-tight">{SETTINGS.brand}</span>
+            {/* Marca: Recoleta Alt Semibold */}
+            <span className="font-display font-semibold tracking-tight text-[18px] text-[--raspberry]">
+              {SETTINGS.brand}
+            </span>
           </a>
-          <nav className="hidden md:flex items-center gap-6 text-[12.5px] uppercase tracking-wide mx-auto">
+
+          {/* Menú: Poppins */}
+          <nav className="hidden md:flex items-center gap-7 text-[15px] uppercase tracking-wide mx-auto font-sans">
             {navItems.map(([id, label]) => (
-              <button key={id}
+              <button
+                key={id}
                 onClick={() => scrollToId(id)}
-                className="relative text-[--graphite-600] hover:text-[--graphite-900]
-                           after:absolute after:left-0 after:-bottom-1 after:h-[2px]
-                           after:w-0 after:bg-[--graphite-900] hover:after:w-full after:transition-all">
+                className="nav-link-line text-[--graphite-600] hover:text-[--graphite-900]"
+              >
                 {label}
               </button>
             ))}
           </nav>
-          <button className="ml-auto md:ml-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full
-                       border border-[--graphite-100] text-sm hover:bg-[--graphite-100]"
+
+          <button
+            className="ml-auto md:ml-0 inline-flex items-center gap-2 px-3.5 py-2 rounded-full
+                       border border-[--graphite-100] text-sm hover:bg-white/50 font-sans"
             onClick={() => setLang(prev => prev === 'en' ? 'es' : 'en')}
-            aria-label="Toggle language">
+            aria-label="Toggle language"
+          >
             <Languages size={16} /> {t.lang}
           </button>
         </div>
-        {/* Nav móvil */}
+
+        {/* Menú móvil */}
         <div className="md:hidden overflow-x-auto px-4 pb-2 -mt-1">
-          <div className="flex gap-5 text-[13px] uppercase tracking-wide text-[--graphite-600]">
+          <div className="flex gap-5 text-[14px] uppercase tracking-wide text-[--graphite-600] font-sans">
             {navItems.map(([id, label]) => (
-              <button key={id}
+              <button
+                key={id}
                 onClick={() => scrollToId(id)}
-                className="relative pb-1 hover:text-[--graphite-900]
-                           after:absolute after:left-0 after:-bottom-0.5 after:h-[2px]
-                           after:w-0 after:bg-[--graphite-900] hover:after:w-full after:transition-all">
+                className="nav-link-line pb-1 hover:text-[--graphite-900]"
+              >
                 {label}
               </button>
             ))}
@@ -344,38 +346,29 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section id="home" className="relative min-h-[92vh] section-anchor">
-        {/* Fondo tipo StayCrafty: imagen + velo marfil para que el logo resalte */}
-        <div className="absolute inset-0 -z-10">
+      {/* ===== HERO ===== */}
+      <section
+        id="home"
+        className="relative min-h-screen grid place-items-center bg-[--hero] section-anchor overflow-hidden"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 10, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+          className="relative w-[240px] sm:w-[320px] md:w-[420px] lg:w-[520px] aspect-square"
+        >
           <Image
-            src="https://images.unsplash.com/photo-1582735729253-f854e6851a89?q=80&w=1600&auto=format&fit=crop"
+            src="/images/logo-white.png"
             alt="Heavenly Knits"
             fill
             priority
-            className="object-cover"
+            className="object-contain"
+            sizes="(max-width: 640px) 240px, (max-width: 768px) 320px, (max-width: 1024px) 420px, 520px"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,247,242,0.85),rgba(255,247,242,0.92))]" />
-        </div>
-
-        {/* Logo y marca centrados */}
-        <div className="h-full max-w-6xl mx-auto px-4 grid place-items-center text-center">
-          <div className="flex flex-col items-center gap-5">
-            <div className="w-36 h-36 rounded-full bg-white/90 grid place-items-center shadow-md ring-1 ring-black/5">
-              <Image src="/images/logo.png" alt="Heavenly Knits" width={86} height={86} />
-            </div>
-            <h1 className="font-display font-semibold text-5xl sm:text-6xl leading-tight tracking-tight">
-              Heavenly Knits
-            </h1>
-            <p className="font-sans text-[--graphite-600]">
-            {lang==='en'
-                ? 'Colorimetry-driven palettes, feminine details, and artisanal technique.'
-                : 'Paletas guiadas por colorimetría, detalles femeninos y técnica artesanal.'}
-            </p>
-          </div>
-        </div>
+        </motion.div>
       </section>
 
+      {/* SECCIONES */}
       <FullSection
         id="kits"
         title="Kits"
@@ -383,7 +376,6 @@ export default function Page() {
         align="right"
         cta={{ href: "#catalog", label: lang==='en' ? 'VIEW ALL' : 'VER TODOS' }}
       />
-
       <FullSection
         id="materials"
         title={lang==='en' ? 'Materials' : 'Materiales'}
@@ -391,7 +383,6 @@ export default function Page() {
         align="left"
         cta={{ href: "#catalog", label: lang==='en' ? 'VIEW ALL' : 'VER TODOS' }}
       />
-
       <FullSection
         id="courses"
         title={lang==='en' ? 'Courses' : 'Cursos'}
@@ -399,7 +390,6 @@ export default function Page() {
         align="right"
         cta={{ href: "#blog", label: lang==='en' ? 'SEE MORE' : 'VER MÁS' }}
       />
-
 
       {/* Catalog */}
       <section id="catalog" className="max-w-6xl mx-auto px-4 py-16">
@@ -548,15 +538,126 @@ export default function Page() {
       </section>
 
       {/* Footer */}
-      <footer className="border-top border-[--graphite-100] py-10">
-        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-[--graphite-600]">© {new Date().getFullYear()} {SETTINGS.brand}. {lang==='en' ? i18n.en.footer.rights : i18n.es.footer.rights}</div>
-          <div className="flex items-center gap-4 text-sm">
-            <a href="#" className="hover:underline">Privacy</a>
-            <a href="#" className="hover:underline">Terms</a>
+      {/* ===== Brand strip (HK palette) ===== */}
+{/* ===== Top strip (gradient) + único separador Deep Rose ===== */}
+<section className="relative text-[--graphite-900]">
+  {/* Degradado muy suave desde bubblegum a transparente */}
+  <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,var(--bubblegum),rgba(255,255,255,0))]" />
+  <div className="max-w-6xl mx-auto px-4">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-5 font-sans text-[15px] font-semibold tracking-wide">
+      <a href="/privacy" className="hover:opacity-90 transition">
+        {lang === 'en' ? 'Shipping Policy' : 'Política de envíos'}
+      </a>
+      <span className="hidden sm:inline opacity-50">•</span>
+      <a href="/faq" className="hover:opacity-90 transition">
+        FAQ
+      </a>
+    </div>
+  </div>
+  {/* ÚNICO divisor (mismo color que “Privacy / Terms”) */}
+  <div className="h-px w-full bg-[--hk-deeprose]" />
+</section>
+
+{/* ===== Footer (Peach base, Deep Rose type, accents) ===== */}
+<footer className="bg-[--hk-peach] text-[--hk-deeprose]">
+  <div className="max-w-6xl mx-auto px-4 py-14">
+    {/* items-center => centrado vertical en desktop */}
+    <div className="grid md:grid-cols-3 gap-10 items-center">
+      {/* Col 1: FIND US (centrado vertical) */}
+      <div className="flex flex-col items-center md:items-center justify-center text-center md:text-left">
+        <div className="uppercase text-[13px] tracking-[0.22em] font-bold mb-4 font-display">
+          {lang === 'en' ? 'Find us' : 'Encuéntranos'}
+        </div>
+        <div className="flex gap-3">
+          <a
+            href={SETTINGS.instagram}
+            target="_blank" rel="noreferrer"
+            className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-mint] border border-white/40 hover:brightness-95 transition"
+            aria-label="Instagram" title="Instagram"
+          >
+            <InstaIcon size={18} color="var(--hk-deeprose)"/>
+          </a>
+          <a
+            href={SETTINGS.youtube}
+            target="_blank" rel="noreferrer"
+            className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-lavender] border border-white/40 hover:brightness-95 transition"
+            aria-label="YouTube" title="YouTube"
+          >
+            <Youtube size={18} color="var(--hk-deeprose)"/>
+          </a>
+        </div>
+      </div>
+
+      {/* Col 2: Logo GRANDE con círculo bubblegum detrás (centrado total) */}
+      <div className="flex flex-col items-center justify-center">
+        <div className="relative flex items-center justify-center">
+          {/* círculo de fondo */}
+          <div
+            aria-hidden="true"
+            className="absolute rounded-full bg-[--bubblegum]
+                       w-[200px] h-[200px] sm:w-[230px] sm:h-[230px]"
+          />
+          {/* logo encima */}
+          <div className="relative w-[360px] sm:w-[420px] aspect-[1.8/1] z-10">
+            <Image
+              src="/images/logo-white.png"
+              alt="Heavenly Knits"
+              fill
+              className="object-contain drop-shadow"
+            />
           </div>
         </div>
-      </footer>
+      </div>
+
+      {/* Col 3: Newsletter (alineada a la izquierda, mayúsculas) */}
+      <div className="flex flex-col justify-center text-left">
+        <div className="font-display text-[13.5px] sm:text-[14px] tracking-[0.22em] uppercase mb-2">
+          {lang === 'en' ? 'Tied by threads' : 'Unidos por hilos'}
+        </div>
+        <p className="font-sans footer-copy mb-4">
+          {lang === 'en'
+            ? 'Soft updates, color stories, and freebies — just the good stitches.'
+            : 'Actualizaciones suaves, historias de color y freebies — solo puntadas bonitas.'}
+        </p>
+
+        <form
+          onSubmit={(e)=>{e.preventDefault(); alert(lang==='en' ? 'Thanks for subscribing!' : '¡Gracias por suscribirte!');}}
+          className="font-sans flex flex-col gap-3"
+        >
+          <input
+            type="email"
+            required
+            placeholder={lang === 'en' ? 'Email' : 'Correo'}
+            className="w-full md:w-[420px] h-12 rounded-xl px-4 text-[15px]
+                       text-[--hk-deeprose] bg-white placeholder:text-[--hk-deeprose]/70
+                       border border-[--bubblegum] focus:outline-none focus:ring-2 focus:ring-[--hk-orange]/40"
+          />
+          <button
+            className="w-full md:w-[420px] h-12 rounded-xl text-[12.5px] font-semibold uppercase tracking-[0.12em]
+                       bg-[--hk-deeprose] text-white hover:bg-[--hk-orange] btn-soft"
+          >
+            {lang === 'en' ? 'Subscribe' : 'Suscríbete'}
+          </button>
+        </form>
+      </div>
     </div>
+
+    {/* Línea inferior (mismo color que “Privacy / Terms”) */}
+    <div className="mt-12 pt-6 border-t border-[--hk-deeprose] text-sm text-[--hk-deeprose] flex flex-col md:flex-row items-center justify-between gap-3 font-sans">
+      <div>
+        © {new Date().getFullYear()} {SETTINGS.brand}. {lang==='en' ? i18n.en.footer.rights : i18n.es.footer.rights}
+      </div>
+      <div className="flex items-center gap-4">
+        <a href="/privacy" className="hover:underline">{lang==='en' ? 'Privacy' : 'Privacidad'}</a>
+        <a href="/terms" className="hover:underline">{lang==='en' ? 'Terms' : 'Términos'}</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+    </motion.div>
   );
 }

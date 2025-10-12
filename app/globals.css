@@ -13,8 +13,13 @@
   --graphite-900:#1E1E1E;
   --graphite-600:#565656;
   --graphite-100:#EDEDED;
-
+  --hero:#FFB3C6;
   --brand-bg: var(--ivory);
+  --hk-peach: #FFE1CC;      /* fondo principal footer */
+  --hk-deeprose: #E33C6C;   /* headings, CTA y textos fuertes */
+  --hk-orange: #FF7A21;     /* hover/acento cálido */
+  --hk-mint: #79E0D1;       /* chip fresco (socials) */
+  --hk-lavender: #C6A7F0;   /* chip fresco (socials) */
 }
 
 @media (prefers-color-scheme: dark){
@@ -27,11 +32,19 @@ html, body { background: var(--brand-bg); color: var(--graphite-900); }
 .font-display { font-family: var(--font-recoleta), ui-serif, Georgia, serif; }
 .font-sans    { font-family: var(--font-poppins), system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 
-/* Textura tipo StayCrafty (salpicado sutil sobre degradé rosado) */
-.hero-texture{
+/* ===== Textura del hero (más visible) ===== */
+.hero-texture-strong{
   background:
-    radial-gradient(circle at 25px 25px, rgba(0,0,0,0.05) 1.2px, transparent 1.3px) 0 0/18px 18px,
-    linear-gradient(180deg, #FFEDE6 0%, #FFF7F2 55%, #FFF 100%);
+    radial-gradient(circle at 20px 20px, rgba(255,255,255,0.10) 1.4px, transparent 1.5px) 0 0 / 22px 22px,
+    radial-gradient(circle at 12px 8px, rgba(0,0,0,0.08) 1px, transparent 1.1px) 0 0 / 18px 18px;
+  mix-blend-mode: overlay;
+  opacity: .75;
+  animation: grainDrift 12s linear infinite;
+}
+@keyframes grainDrift {
+  0%   { background-position: 0 0, 0 0; }
+  50%  { background-position: 14px 10px, -10px 6px; }
+  100% { background-position: 0 0, 0 0; }
 }
 
 /* Botones y helpers */
@@ -41,8 +54,73 @@ html, body { background: var(--brand-bg); color: var(--graphite-900); }
 .btn-ghost:hover { background: var(--graphite-100); }
 .badge-round { @apply inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold; background: #135D3B; color:#fff; }
 
-/* Anclas con compensación por header sticky */
-.section-anchor{ scroll-margin-top: 88px; }
+/* Compensación de scroll por header (pegajoso, 64px de alto) */
+.section-anchor{ scroll-margin-top: 104px; }
 
 /* Sombras suaves tipo tarjeta */
 .card { @apply bg-white rounded-3xl border border-[--graphite-100] shadow-md overflow-hidden; }
+
+/* ===== Subrayado tipo línea gruesa del color del hero ===== */
+.nav-link-line{
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+.nav-link-line::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-6px;
+  height:4px;                        /* más gruesa */
+  background: var(--hero);           /* mismo color del hero */
+  border-radius:9999px;
+  transform-origin:left center;
+  transform:scaleX(0);
+  transition:transform .28s ease;
+}
+.nav-link-line:hover::after,
+.nav-link-line:focus-visible::after{
+  transform:scaleX(1);
+}
+
+/* ===== Splash loader (anillo del color del hero) ===== */
+.splash-loader{ position: relative; width: 88px; height: 88px; }
+.ring{
+  position: absolute; inset: 0; border-radius: 9999px;
+  background: radial-gradient(circle at center,
+              color-mix(in srgb, var(--hero) 100%, transparent 0%) 0 10px,
+              rgba(245, 128, 185, 0) 10px);
+  animation: pulseRing 1s ease-out infinite;
+}
+.dot{
+  position: absolute; left: 50%; top: 50%;
+  width: 14px; height: 14px; transform: translate(-50%,-50%);
+  border-radius: 9999px; background: var(--hero);
+  box-shadow: 0 1px 6px rgba(251, 144, 217, 0.1);
+  animation: pulseDot 1s ease-in-out infinite;
+}
+.ring-hero{ /* alias por si quieres otras variantes luego */ }
+.dot-hero{  /* idem */ }
+
+@keyframes pulseRing {
+  0%   { transform: scale(0.6); opacity: .9; }
+  70%  { transform: scale(1.25); opacity: .18; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+@keyframes pulseDot {
+  0%,100% { transform: translate(-50%,-50%) scale(1); }
+  50%     { transform: translate(-50%,-50%) scale(0.9); }
+}
+
+/* Opcional: utilidades de foco/hover suaves */
+.btn-soft {
+  transition: filter .2s ease, transform .08s ease;
+}
+.btn-soft:hover { filter: brightness(.96); }
+.btn-soft:active { transform: scale(.99); }
+
+/* Asegura espaciado cómodo tipo StayCrafty en párrafos del footer */
+.footer-copy {
+  font-size: 15px;
+  line-height: 1.8;
+  opacity: .95;
+}
