@@ -49,17 +49,17 @@ export default function UCPage() {
         </button>
 
         <div className="w-full max-w-xl px-6 text-center mx-auto">
-          {/* LOGO GRANDE (ajustado) */}
-          <div className="mx-auto mb-8 relative w-40 sm:w-52 md:w-64 lg:w-72 aspect-[1.9/1]">
-            <Image
-              src="/images/logo-white.webp"
-              alt="Heavenly Knits"
-              fill
-              priority
-              className="object-contain drop-shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-              sizes="(max-width: 640px) 160px, (max-width: 1024px) 256px, 288px"
-            />
-          </div>
+          {/* Logo grande y nítido */}
+<div className="mt-2 mx-auto relative w-[260px] sm:w-[320px] md:w-[380px] lg:w-[420px] aspect-[2/1]">
+  <Image
+    src="/images/logo-white.webp?v=2"      // cache-bust para ver el cambio seguro
+    alt="Heavenly Knits"
+    fill
+    priority
+    className="object-contain"
+    sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, (max-width: 1440px) 380px, 420px"
+  />
+</div>
 
           {/* TÍTULO y SUB */}
           <h1 className="font-display text-[22px] sm:text-[26px] md:text-[28px] font-semibold tracking-tight">
