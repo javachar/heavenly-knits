@@ -62,7 +62,7 @@ export default function UnderConstructionPage() {
       >
         {/* Logo */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
+          initial={{ opacity: 0, scale: 1.5 }}
           animate={{ opacity: booting ? 0 : 1, scale: booting ? 0.98 : 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
           className="mx-auto mb-8 relative w-[220px] sm:w-[260px] md:w-[300px] aspect-[1.8/1]"
