@@ -9,6 +9,11 @@ import { QRCodeCanvas } from "qrcode.react";
 import Image from "next/image";
 
 /* =========================
+   FLAGS
+========================= */
+const UNDER_CONSTRUCTION = true; // ← ponlo en false cuando quieras mostrar el sitio completo
+
+/* =========================
    SETTINGS
 ========================= */
 const SETTINGS = {
@@ -21,11 +26,6 @@ const SETTINGS = {
   youtube: "https://www.youtube.com/@HeavenlyKnits",
   siteUrl: "https://heavenlyknits.com",
 };
-
-const SITE = {
-  underConstruction: true, // ← ponlo en false cuando quieras mostrar la web
-};
-
 
 const COLORS = {
   pinkBrand: "#F6A3C0",
@@ -220,6 +220,89 @@ function FullSection({ id, title, img, align="right", cta }) {
 }
 
 /* =========================
+   UNDER CONSTRUCTION SCREEN (Option A)
+========================= */
+function UnderConstruction({ instagram, youtube, email }) {
+  const [lang, setLang] = React.useState("en"); // EN by default
+  const copy = {
+    en: {
+      title: "We’re crafting something lovely",
+      subtitle: "Our website is under construction.",
+      cta1: "Follow on Instagram",
+      cta2: "Watch on YouTube",
+      or: "or write us at",
+      langToggle: "ES",
+    },
+    es: {
+      title: "Estamos tejiendo algo lindo",
+      subtitle: "Nuestro sitio está en construcción.",
+      cta1: "Síguenos en Instagram",
+      cta2: "Míranos en YouTube",
+      or: "o escríbenos a",
+      langToggle: "EN",
+    },
+  }[lang];
+
+  return (
+    <div className="fixed inset-0 z-[9998] bg-white grid place-items-center px-4">
+      {/* Language toggle */}
+      <button
+        onClick={() => setLang(prev => (prev === "en" ? "es" : "en"))}
+        className="absolute top-4 right-4 rounded-full border border-[--graphite-100] bg-white/70 backdrop-blur px-3 py-1 text-sm hover:bg-[--graphite-100]"
+        aria-label="Toggle language"
+      >
+        {copy.langToggle}
+      </button>
+
+      {/* Content */}
+      <div className="max-w-xl w-full text-center">
+        <div className="mx-auto mb-6 w-24 h-24 rounded-full grid place-items-center bg-[--bubblegum]">
+          <img
+            src="/images/logo-white.webp"
+            alt="Heavenly Knits"
+            className="w-14 h-14 object-contain"
+            loading="eager"
+          />
+        </div>
+        <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[--graphite-900]">
+          {copy.title}
+        </h1>
+        <p className="mt-2 text-[--graphite-600]">{copy.subtitle}</p>
+
+        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href={instagram}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl h-11 px-5 bg-[--raspberry] text-white hover:brightness-95"
+          >
+            Instagram
+          </a>
+          <a
+            href={youtube}
+            target="_blank"
+            rel="noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl h-11 px-5 border border-[--graphite-100] hover:bg-[--graphite-100]"
+          >
+            YouTube
+          </a>
+        </div>
+
+        <div className="mt-5 text-sm text-[--graphite-600]">
+          {copy.or}{" "}
+          <a
+            href={`mailto:${email}?subject=Heavenly%20Knits%20—%20Enquiry`}
+            className="underline"
+          >
+            {email}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
    PAGE
 ========================= */
 export default function Page() {
@@ -235,7 +318,7 @@ export default function Page() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Instagram
+  // Instagram (embeds)
   const [embedUrls, setEmbedUrls] = useState([]);
   const [igError, setIgError] = useState("");
   useEffect(() => {
@@ -274,13 +357,28 @@ export default function Page() {
     ["instagram", t.nav.instagram],
   ];
 
-  // ===== Splash control: solo splash blanco y luego la página aparece =====
-  const [booting, setBooting] = useState(true);
+  // Splash (si lo usas en modo normal; se ignora cuando UNDER_CONSTRUCTION es true)
+  const [booting, setBooting] = useState(false);
   useEffect(() => {
-    const tmr = setTimeout(() => setBooting(false), 1500);
-    return () => clearTimeout(tmr);
+    if (!UNDER_CONSTRUCTION) {
+      setBooting(true);
+      const tmr = setTimeout(() => setBooting(false), 1500);
+      return () => clearTimeout(tmr);
+    }
   }, []);
 
+  // === Under construction: corta aquí y muestra pantalla completa
+  if (UNDER_CONSTRUCTION) {
+    return (
+      <UnderConstruction
+        instagram={SETTINGS.instagram}
+        youtube={SETTINGS.youtube}
+        email={SETTINGS.email}
+      />
+    );
+  }
+
+  // Splash normal (solo si no está en construcción)
   if (booting) {
     return (
       <div className="fixed inset-0 z-[9999] grid place-items-center bg-white">
@@ -291,63 +389,6 @@ export default function Page() {
       </div>
     );
   }
-
-  // --- Modo "Página en construcción" ---
-if (SITE.underConstruction) {
-  return (
-    <div className="min-h-screen grid place-items-center bg-[--hero] text-[--graphite-900]">
-      <div className="w-full max-w-xl px-6 text-center">
-        {/* Logo */}
-        <div className="mx-auto mb-8 relative w-[220px] sm:w-[280px] md:w-[320px] aspect-square">
-          <Image
-            src="/images/logo-white.webp" // usa el .webp optimizado
-            alt="Heavenly Knits"
-            fill
-            priority
-            className="object-contain"
-            sizes="(max-width: 640px) 220px, (max-width: 768px) 280px, 320px"
-          />
-        </div>
-
-        {/* Mensaje */}
-        <h1 className="font-display font-semibold text-3xl sm:text-4xl">
-          Página en construcción
-        </h1>
-        <p className="mt-3 font-sans text-[--graphite-900]/80">
-          Estamos tejiendo algo bonito. Mientras tanto, síguenos:
-        </p>
-
-        {/* Botones */}
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <a
-            href={SETTINGS.instagram}
-            target="_blank" rel="noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl h-12 px-5
-                       bg-white text-[--graphite-900] border border-white/60 hover:brightness-95"
-          >
-            <InstaIcon size={18} />
-            Instagram
-          </a>
-          <a
-            href={SETTINGS.youtube}
-            target="_blank" rel="noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-xl h-12 px-5
-                       bg-[--graphite-900] text-white hover:opacity-90"
-          >
-            <Youtube size={18} />
-            YouTube
-          </a>
-        </div>
-
-        {/* Nota pequeña */}
-        <p className="mt-6 text-sm font-sans text-[--graphite-900]/70">
-          Heavenly Knits — Handmade with love
-        </p>
-      </div>
-    </div>
-  );
-}
-
 
   return (
     <motion.div
@@ -363,7 +404,6 @@ if (SITE.underConstruction) {
       >
         <div className="max-w-6xl mx-auto h-16 px-4 flex items-center gap-4">
           <a href="#home" className="flex items-center gap-3 shrink-0">
-            {/* Marca: Recoleta Alt Semibold */}
             <span className="font-display font-semibold tracking-tight text-[18px] text-[--raspberry]">
               {SETTINGS.brand}
             </span>
@@ -430,7 +470,6 @@ if (SITE.underConstruction) {
             className="object-contain"
             sizes="(max-width: 640px) 240px, (max-width: 768px) 320px, (max-width: 1024px) 420px, 520px"
           />
-
         </motion.div>
       </section>
 
@@ -559,7 +598,7 @@ if (SITE.underConstruction) {
         </div>
       </section>
 
-      {/* Feria / QR */}
+      {/* Fair / QR */}
       <section id="fair" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.fair.title}</h2>
         <div className="grid md:grid-cols-2 gap-10 items-center bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-md">
@@ -603,131 +642,118 @@ if (SITE.underConstruction) {
         )}
       </section>
 
-      {/* Footer */}
-      {/* ===== Brand strip (HK palette) ===== */}
-{/* ===== Top strip (gradient) + único separador Deep Rose ===== */}
-<section className="relative text-[--graphite-900]">
-  {/* Degradado muy suave desde bubblegum a transparente */}
-  <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,var(--bubblegum),rgba(255,255,255,0))]" />
-  <div className="max-w-6xl mx-auto px-4">
-    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-5 font-sans text-[15px] font-semibold tracking-wide">
-      <a href="/privacy" className="hover:opacity-90 transition">
-        {lang === 'en' ? 'Shipping Policy' : 'Política de envíos'}
-      </a>
-      <span className="hidden sm:inline opacity-50">•</span>
-      <a href="/faq" className="hover:opacity-90 transition">
-        FAQ
-      </a>
-    </div>
-  </div>
-  {/* ÚNICO divisor (mismo color que “Privacy / Terms”) */}
-  <div className="h-px w-full bg-[--hk-deeprose]" />
-</section>
-
-{/* ===== Footer (Peach base, Deep Rose type, accents) ===== */}
-<footer className="bg-[--hk-peach] text-[--hk-deeprose]">
-  <div className="max-w-6xl mx-auto px-4 py-14">
-    {/* items-center => centrado vertical en desktop */}
-    <div className="grid md:grid-cols-3 gap-10 items-center">
-      {/* Col 1: FIND US (centrado vertical) */}
-      <div className="flex flex-col items-center md:items-center justify-center text-center md:text-left">
-        <div className="uppercase text-[13px] tracking-[0.22em] font-bold mb-4 font-display">
-          {lang === 'en' ? 'Find us' : 'Encuéntranos'}
-        </div>
-        <div className="flex gap-3">
-          <a
-            href={SETTINGS.instagram}
-            target="_blank" rel="noreferrer"
-            className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-mint] border border-white/40 hover:brightness-95 transition"
-            aria-label="Instagram" title="Instagram"
-          >
-            <InstaIcon size={18} color="var(--hk-deeprose)"/>
-          </a>
-          <a
-            href={SETTINGS.youtube}
-            target="_blank" rel="noreferrer"
-            className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-lavender] border border-white/40 hover:brightness-95 transition"
-            aria-label="YouTube" title="YouTube"
-          >
-            <Youtube size={18} color="var(--hk-deeprose)"/>
-          </a>
-        </div>
-      </div>
-
-      {/* Col 2: Logo GRANDE con círculo bubblegum detrás (centrado total) */}
-      <div className="flex flex-col items-center justify-center">
-        <div className="relative flex items-center justify-center">
-          {/* círculo de fondo */}
-          <div
-            aria-hidden="true"
-            className="absolute rounded-full bg-[--bubblegum]
-                       w-[200px] h-[200px] sm:w-[230px] sm:h-[230px]"
-          />
-          {/* logo encima */}
-          <div className="relative w-[360px] sm:w-[420px] aspect-[1.8/1] z-10">
-            <Image
-              src="/images/logo-white.webp"
-              alt="Heavenly Knits"
-              fill
-              priority
-              decoding="sync"
-              className="object-contain drop-shadow"
-              sizes="(max-width: 640px) 360px, (max-width: 768px) 420px, 420px"
-            />
-
+      {/* ===== Brand strip (gradient) + único separador Deep Rose ===== */}
+      <section className="relative text-[--graphite-900]">
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,var(--bubblegum),rgba(255,255,255,0))]" />
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 py-5 font-sans text-[15px] font-semibold tracking-wide">
+            <a href="/privacy" className="hover:opacity-90 transition">
+              {lang === 'en' ? 'Shipping Policy' : 'Política de envíos'}
+            </a>
+            <span className="hidden sm:inline opacity-50">•</span>
+            <a href="/faq" className="hover:opacity-90 transition">
+              FAQ
+            </a>
           </div>
         </div>
-      </div>
+        <div className="h-px w-full bg-[--hk-deeprose]" />
+      </section>
 
-      {/* Col 3: Newsletter (alineada a la izquierda, mayúsculas) */}
-      <div className="flex flex-col justify-center text-left">
-        <div className="font-display text-[13.5px] sm:text-[14px] tracking-[0.22em] uppercase mb-2">
-          {lang === 'en' ? 'Tied by threads' : 'Unidos por hilos'}
+      {/* ===== Footer ===== */}
+      <footer className="bg-[--hk-peach] text-[--hk-deeprose]">
+        <div className="max-w-6xl mx-auto px-4 py-14">
+          <div className="grid md:grid-cols-3 gap-10 items-center">
+            {/* Find us */}
+            <div className="flex flex-col items-center md:items-center justify-center text-center md:text-left">
+              <div className="uppercase text-[13px] tracking-[0.22em] font-bold mb-4 font-display">
+                {lang === 'en' ? 'Find us' : 'Encuéntranos'}
+              </div>
+              <div className="flex gap-3">
+                <a
+                  href={SETTINGS.instagram}
+                  target="_blank" rel="noreferrer"
+                  className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-mint] border border-white/40 hover:brightness-95 transition"
+                  aria-label="Instagram" title="Instagram"
+                >
+                  <InstaIcon size={18} color="var(--hk-deeprose)"/>
+                </a>
+                <a
+                  href={SETTINGS.youtube}
+                  target="_blank" rel="noreferrer"
+                  className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-lavender] border border-white/40 hover:brightness-95 transition"
+                  aria-label="YouTube" title="YouTube"
+                >
+                  <Youtube size={18} color="var(--hk-deeprose)"/>
+                </a>
+              </div>
+            </div>
+
+            {/* Logo grande con círculo bubblegum */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="relative flex items-center justify-center">
+                <div
+                  aria-hidden="true"
+                  className="absolute rounded-full bg-[--bubblegum]
+                             w-[200px] h-[200px] sm:w-[230px] sm:h-[230px]"
+                />
+                <div className="relative w-[360px] sm:w-[420px] aspect-[1.8/1] z-10">
+                  <Image
+                    src="/images/logo-white.webp"
+                    alt="Heavenly Knits"
+                    fill
+                    priority
+                    decoding="sync"
+                    className="object-contain drop-shadow"
+                    sizes="(max-width: 640px) 360px, (max-width: 768px) 420px, 420px"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Newsletter */}
+            <div className="flex flex-col justify-center text-left">
+              <div className="font-display text-[13.5px] sm:text-[14px] tracking-[0.22em] uppercase mb-2">
+                {lang === 'en' ? 'Tied by threads' : 'Unidos por hilos'}
+              </div>
+              <p className="font-sans footer-copy mb-4">
+                {lang === 'en'
+                  ? 'Soft updates, color stories, and freebies — just the good stitches.'
+                  : 'Actualizaciones suaves, historias de color y freebies — solo puntadas bonitas.'}
+              </p>
+
+              <form
+                onSubmit={(e)=>{e.preventDefault(); alert(lang==='en' ? 'Thanks for subscribing!' : '¡Gracias por suscribirte!');}}
+                className="font-sans flex flex-col gap-3"
+              >
+                <input
+                  type="email"
+                  required
+                  placeholder={lang === 'en' ? 'Email' : 'Correo'}
+                  className="w-full md:w-[420px] h-12 rounded-xl px-4 text-[15px]
+                             text-[--hk-deeprose] bg-white placeholder:text-[--hk-deeprose]/70
+                             border border-[--bubblegum] focus:outline-none focus:ring-2 focus:ring-[--hk-orange]/40"
+                />
+                <button
+                  className="w-full md:w-[420px] h-12 rounded-xl text-[12.5px] font-semibold uppercase tracking-[0.12em]
+                             bg-[--hk-deeprose] text-white hover:bg-[--hk-orange] btn-soft"
+                >
+                  {lang === 'en' ? 'Subscribe' : 'Suscríbete'}
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div className="mt-12 pt-6 border-t border-[--hk-deeprose] text-sm text-[--hk-deeprose] flex flex-col md:flex-row items-center justify-between gap-3 font-sans">
+            <div>
+              © {new Date().getFullYear()} {SETTINGS.brand}. {lang==='en' ? i18n.en.footer.rights : i18n.es.footer.rights}
+            </div>
+            <div className="flex items-center gap-4">
+              <a href="/privacy" className="hover:underline">{lang==='en' ? 'Privacy' : 'Privacidad'}</a>
+              <a href="/terms" className="hover:underline">{lang==='en' ? 'Terms' : 'Términos'}</a>
+            </div>
+          </div>
         </div>
-        <p className="font-sans footer-copy mb-4">
-          {lang === 'en'
-            ? 'Soft updates, color stories, and freebies — just the good stitches.'
-            : 'Actualizaciones suaves, historias de color y freebies — solo puntadas bonitas.'}
-        </p>
-
-        <form
-          onSubmit={(e)=>{e.preventDefault(); alert(lang==='en' ? 'Thanks for subscribing!' : '¡Gracias por suscribirte!');}}
-          className="font-sans flex flex-col gap-3"
-        >
-          <input
-            type="email"
-            required
-            placeholder={lang === 'en' ? 'Email' : 'Correo'}
-            className="w-full md:w-[420px] h-12 rounded-xl px-4 text-[15px]
-                       text-[--hk-deeprose] bg-white placeholder:text-[--hk-deeprose]/70
-                       border border-[--bubblegum] focus:outline-none focus:ring-2 focus:ring-[--hk-orange]/40"
-          />
-          <button
-            className="w-full md:w-[420px] h-12 rounded-xl text-[12.5px] font-semibold uppercase tracking-[0.12em]
-                       bg-[--hk-deeprose] text-white hover:bg-[--hk-orange] btn-soft"
-          >
-            {lang === 'en' ? 'Subscribe' : 'Suscríbete'}
-          </button>
-        </form>
-      </div>
-    </div>
-
-    {/* Línea inferior (mismo color que “Privacy / Terms”) */}
-    <div className="mt-12 pt-6 border-t border-[--hk-deeprose] text-sm text-[--hk-deeprose] flex flex-col md:flex-row items-center justify-between gap-3 font-sans">
-      <div>
-        © {new Date().getFullYear()} {SETTINGS.brand}. {lang==='en' ? i18n.en.footer.rights : i18n.es.footer.rights}
-      </div>
-      <div className="flex items-center gap-4">
-        <a href="/privacy" className="hover:underline">{lang==='en' ? 'Privacy' : 'Privacidad'}</a>
-        <a href="/terms" className="hover:underline">{lang==='en' ? 'Terms' : 'Términos'}</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-
-
-
+      </footer>
     </motion.div>
   );
 }
