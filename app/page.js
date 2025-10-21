@@ -16,11 +16,16 @@ const SETTINGS = {
   taglineEN: "Handmade with love",
   taglineES: "Hecho a mano con amor",
   phone: "+1 (520) 527-8311",
-  email: "hello.heavenlyknits@gmail.com",
+  email: "hello@heavenlyknits.com",
   instagram: "https://www.instagram.com/heavenlyknits.co",
   youtube: "https://www.youtube.com/@HeavenlyKnits",
   siteUrl: "https://heavenlyknits.com",
 };
+
+const SITE = {
+  underConstruction: true, // ← ponlo en false cuando quieras mostrar la web
+};
+
 
 const COLORS = {
   pinkBrand: "#F6A3C0",
@@ -286,6 +291,63 @@ export default function Page() {
       </div>
     );
   }
+
+  // --- Modo "Página en construcción" ---
+if (SITE.underConstruction) {
+  return (
+    <div className="min-h-screen grid place-items-center bg-[--hero] text-[--graphite-900]">
+      <div className="w-full max-w-xl px-6 text-center">
+        {/* Logo */}
+        <div className="mx-auto mb-8 relative w-[220px] sm:w-[280px] md:w-[320px] aspect-square">
+          <Image
+            src="/images/logo-white.webp" // usa el .webp optimizado
+            alt="Heavenly Knits"
+            fill
+            priority
+            className="object-contain"
+            sizes="(max-width: 640px) 220px, (max-width: 768px) 280px, 320px"
+          />
+        </div>
+
+        {/* Mensaje */}
+        <h1 className="font-display font-semibold text-3xl sm:text-4xl">
+          Página en construcción
+        </h1>
+        <p className="mt-3 font-sans text-[--graphite-900]/80">
+          Estamos tejiendo algo bonito. Mientras tanto, síguenos:
+        </p>
+
+        {/* Botones */}
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          <a
+            href={SETTINGS.instagram}
+            target="_blank" rel="noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl h-12 px-5
+                       bg-white text-[--graphite-900] border border-white/60 hover:brightness-95"
+          >
+            <InstaIcon size={18} />
+            Instagram
+          </a>
+          <a
+            href={SETTINGS.youtube}
+            target="_blank" rel="noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl h-12 px-5
+                       bg-[--graphite-900] text-white hover:opacity-90"
+          >
+            <Youtube size={18} />
+            YouTube
+          </a>
+        </div>
+
+        {/* Nota pequeña */}
+        <p className="mt-6 text-sm font-sans text-[--graphite-900]/70">
+          Heavenly Knits — Handmade with love
+        </p>
+      </div>
+    </div>
+  );
+}
+
 
   return (
     <motion.div
