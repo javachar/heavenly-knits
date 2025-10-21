@@ -9,9 +9,11 @@ import { QRCodeCanvas } from "qrcode.react";
 import Image from "next/image";
 
 /* =========================
-   FLAGS
+   TOGGLE GLOBAL
 ========================= */
-const UNDER_CONSTRUCTION = true; // ← ponlo en false cuando quieras mostrar el sitio completo
+const SITE = {
+  underConstruction: true, // <-- ponlo en false cuando quieras mostrar el sitio
+};
 
 /* =========================
    SETTINGS
@@ -20,7 +22,7 @@ const SETTINGS = {
   brand: "Heavenly Knits",
   taglineEN: "Handmade with love",
   taglineES: "Hecho a mano con amor",
-  phone: "+1 (520) 527-8311",
+  phone: "(520) 527-8311",
   email: "hello@heavenlyknits.com",
   instagram: "https://www.instagram.com/heavenlyknits.co",
   youtube: "https://www.youtube.com/@HeavenlyKnits",
@@ -84,7 +86,7 @@ const i18n = {
 };
 
 /* =========================
-   DATA
+   DATA (mock)
 ========================= */
 const PRODUCTS = [
   {
@@ -220,83 +222,89 @@ function FullSection({ id, title, img, align="right", cta }) {
 }
 
 /* =========================
-   UNDER CONSTRUCTION SCREEN (Option A)
+   UNDER CONSTRUCTION (EN por defecto + ES toggle)
+   — Fondo del HERO (rosa), logo GRANDE, email visible
 ========================= */
 function UnderConstruction({ instagram, youtube, email }) {
-  const [lang, setLang] = React.useState("en"); // EN by default
-  const copy = {
-    en: {
-      title: "We’re crafting something lovely",
-      subtitle: "Our website is under construction.",
-      cta1: "Follow on Instagram",
-      cta2: "Watch on YouTube",
-      or: "or write us at",
-      langToggle: "ES",
-    },
-    es: {
-      title: "Estamos tejiendo algo lindo",
-      subtitle: "Nuestro sitio está en construcción.",
-      cta1: "Síguenos en Instagram",
-      cta2: "Míranos en YouTube",
-      or: "o escríbenos a",
-      langToggle: "EN",
-    },
-  }[lang];
+  const [lang, setLang] = useState("en"); // EN por defecto
+
+  const copy = lang === "en"
+    ? {
+        title: "We’re crafting something lovely",
+        subtitle: "Our website is under construction.",
+        ig: "Follow on Instagram",
+        yt: "Watch on YouTube",
+        or: "or write us at",
+        langToggle: "ES",
+      }
+    : {
+        title: "Estamos tejiendo algo lindo",
+        subtitle: "Nuestro sitio está en construcción.",
+        ig: "Síguenos en Instagram",
+        yt: "Míranos en YouTube",
+        or: "o escríbenos a",
+        langToggle: "EN",
+      };
 
   return (
-    <div className="fixed inset-0 z-[9998] bg-white grid place-items-center px-4">
-      {/* Language toggle */}
+    <div className="fixed inset-0 z-[9998] grid place-items-center bg-[--hero]">
+      {/* Toggle idioma */}
       <button
-        onClick={() => setLang(prev => (prev === "en" ? "es" : "en"))}
-        className="absolute top-4 right-4 rounded-full border border-[--graphite-100] bg-white/70 backdrop-blur px-3 py-1 text-sm hover:bg-[--graphite-100]"
+        onClick={() => setLang((p) => (p === "en" ? "es" : "en"))}
+        className="absolute top-4 right-4 rounded-full border border-white/60 bg-white/20 text-white/95 backdrop-blur px-3 py-1 text-sm hover:bg-white/30"
         aria-label="Toggle language"
       >
         {copy.langToggle}
       </button>
 
-      {/* Content */}
-      <div className="max-w-xl w-full text-center">
-        <div className="mx-auto mb-6 w-24 h-24 rounded-full grid place-items-center bg-[--bubblegum]">
-          <img
+      <div className="w-full max-w-2xl px-6 text-center text-white">
+        {/* Logo GRANDE */}
+        <div className="mx-auto mb-8 relative w-[300px] sm:w-[380px] md:w-[480px] lg:w-[560px] aspect-square">
+          <Image
             src="/images/logo-white.webp"
             alt="Heavenly Knits"
-            className="w-14 h-14 object-contain"
+            fill
+            priority
             loading="eager"
+            decoding="sync"
+            className="object-contain"
+            sizes="(max-width: 640px) 300px, (max-width: 768px) 380px, (max-width: 1024px) 480px, 560px"
           />
         </div>
-        <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[--graphite-900]">
+
+        <h1 className="font-display font-semibold text-3xl sm:text-4xl tracking-tight">
           {copy.title}
         </h1>
-        <p className="mt-2 text-[--graphite-600]">{copy.subtitle}</p>
+        <p className="mt-2 text-white/90">{copy.subtitle}</p>
 
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
             href={instagram}
             target="_blank"
             rel="noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl h-11 px-5 bg-[--raspberry] text-white hover:brightness-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl h-12 px-5 bg-white text-[--graphite-900] border border-white/60 hover:brightness-95"
           >
-            Instagram
+            <InstaIcon size={18} /> Instagram
           </a>
           <a
             href={youtube}
             target="_blank"
             rel="noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl h-11 px-5 border border-[--graphite-100] hover:bg-[--graphite-100]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl h-12 px-5 bg-[--graphite-900] text-white hover:opacity-90"
           >
-            YouTube
+            <Youtube size={18} /> YouTube
           </a>
         </div>
 
-        <div className="mt-5 text-sm text-[--graphite-600]">
+        <p className="mt-5 text-white/90">
           {copy.or}{" "}
-          <a
-            href={`mailto:${email}?subject=Heavenly%20Knits%20—%20Enquiry`}
-            className="underline"
-          >
+          <a href={`mailto:${email}`} className="underline decoration-white/70 underline-offset-2">
             {email}
           </a>
-        </div>
+        </p>
+        <p className="mt-6 text-sm/relaxed text-white/80">
+          Heavenly Knits — Handmade with love
+        </p>
       </div>
     </div>
   );
@@ -318,7 +326,7 @@ export default function Page() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Instagram (embeds)
+  // Instagram (modo embeds)
   const [embedUrls, setEmbedUrls] = useState([]);
   const [igError, setIgError] = useState("");
   useEffect(() => {
@@ -357,28 +365,13 @@ export default function Page() {
     ["instagram", t.nav.instagram],
   ];
 
-  // Splash (si lo usas en modo normal; se ignora cuando UNDER_CONSTRUCTION es true)
-  const [booting, setBooting] = useState(false);
+  // Splash (arranque)
+  const [booting, setBooting] = useState(true);
   useEffect(() => {
-    if (!UNDER_CONSTRUCTION) {
-      setBooting(true);
-      const tmr = setTimeout(() => setBooting(false), 1500);
-      return () => clearTimeout(tmr);
-    }
+    const tmr = setTimeout(() => setBooting(false), 1500);
+    return () => clearTimeout(tmr);
   }, []);
 
-  // === Under construction: corta aquí y muestra pantalla completa
-  if (UNDER_CONSTRUCTION) {
-    return (
-      <UnderConstruction
-        instagram={SETTINGS.instagram}
-        youtube={SETTINGS.youtube}
-        email={SETTINGS.email}
-      />
-    );
-  }
-
-  // Splash normal (solo si no está en construcción)
   if (booting) {
     return (
       <div className="fixed inset-0 z-[9999] grid place-items-center bg-white">
@@ -387,6 +380,17 @@ export default function Page() {
           <span className="dot dot-hero"></span>
         </div>
       </div>
+    );
+  }
+
+  // MODO CONSTRUCCIÓN (fondo rosa, logo grande)
+  if (SITE.underConstruction) {
+    return (
+      <UnderConstruction
+        instagram={SETTINGS.instagram}
+        youtube={SETTINGS.youtube}
+        email={SETTINGS.email}
+      />
     );
   }
 
@@ -473,7 +477,7 @@ export default function Page() {
         </motion.div>
       </section>
 
-      {/* SECCIONES */}
+      {/* ===== SECCIONES (igual que antes) ===== */}
       <FullSection
         id="kits"
         title="Kits"
@@ -598,7 +602,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Fair / QR */}
+      {/* Feria / QR */}
       <section id="fair" className="max-w-6xl mx-auto px-4 py-16">
         <h2 className="text-2xl font-black mb-6">{t.fair.title}</h2>
         <div className="grid md:grid-cols-2 gap-10 items-center bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-md">
@@ -615,34 +619,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Instagram dinámico */}
-      <section id="instagram" className="max-w-6xl mx-auto px-4 py-16">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <h2 className="text-2xl font-black">
-            {lang === 'en' ? i18n.en.ig.title : i18n.es.ig.title} <span className="text-[--graphite-600]">@{INSTAGRAM.handle}</span>
-          </h2>
-          <a href={`https://instagram.com/${INSTAGRAM.handle}`} target="_blank" rel="noreferrer"
-             className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl border border-[--graphite-100] hover:bg-[--graphite-100] transition">
-            <InstaIcon size={18}/> {lang === 'en' ? i18n.en.ig.view : i18n.es.ig.view}
-          </a>
-        </div>
-
-        {INSTAGRAM.mode === "embeds" ? (
-          igError
-            ? <div className="text-red-700 bg-red-50 border border-red-200 p-4 rounded-2xl">{igError}</div>
-            : <InstagramEmbeds urls={embedUrls} />
-        ) : (
-          <div className="grid grid-cols-3 gap-3">
-            {INSTAGRAM.grid.map((p, i) => (
-              <a key={i} href={p.href} target="_blank" rel="noreferrer" className="group block rounded-2xl overflow-hidden border border-[--graphite-100]">
-                <img src={p.img} alt={p.alt} className="w-full aspect-square object-cover group-hover:scale-[1.02] transition-transform"/>
-              </a>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* ===== Brand strip (gradient) + único separador Deep Rose ===== */}
+      {/* ===== FOOTER ===== */}
       <section className="relative text-[--graphite-900]">
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,var(--bubblegum),rgba(255,255,255,0))]" />
         <div className="max-w-6xl mx-auto px-4">
@@ -651,51 +628,37 @@ export default function Page() {
               {lang === 'en' ? 'Shipping Policy' : 'Política de envíos'}
             </a>
             <span className="hidden sm:inline opacity-50">•</span>
-            <a href="/faq" className="hover:opacity-90 transition">
-              FAQ
-            </a>
+            <a href="/faq" className="hover:opacity-90 transition">FAQ</a>
           </div>
         </div>
         <div className="h-px w-full bg-[--hk-deeprose]" />
       </section>
 
-      {/* ===== Footer ===== */}
       <footer className="bg-[--hk-peach] text-[--hk-deeprose]">
         <div className="max-w-6xl mx-auto px-4 py-14">
           <div className="grid md:grid-cols-3 gap-10 items-center">
-            {/* Find us */}
             <div className="flex flex-col items-center md:items-center justify-center text-center md:text-left">
               <div className="uppercase text-[13px] tracking-[0.22em] font-bold mb-4 font-display">
                 {lang === 'en' ? 'Find us' : 'Encuéntranos'}
               </div>
               <div className="flex gap-3">
-                <a
-                  href={SETTINGS.instagram}
-                  target="_blank" rel="noreferrer"
-                  className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-mint] border border-white/40 hover:brightness-95 transition"
-                  aria-label="Instagram" title="Instagram"
-                >
+                <a href={SETTINGS.instagram} target="_blank" rel="noreferrer"
+                   className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-mint] border border-white/40 hover:brightness-95 transition"
+                   aria-label="Instagram" title="Instagram">
                   <InstaIcon size={18} color="var(--hk-deeprose)"/>
                 </a>
-                <a
-                  href={SETTINGS.youtube}
-                  target="_blank" rel="noreferrer"
-                  className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-lavender] border border-white/40 hover:brightness-95 transition"
-                  aria-label="YouTube" title="YouTube"
-                >
+                <a href={SETTINGS.youtube} target="_blank" rel="noreferrer"
+                   className="w-10 h-10 grid place-items-center rounded-full bg-[--hk-lavender] border border-white/40 hover:brightness-95 transition"
+                   aria-label="YouTube" title="YouTube">
                   <Youtube size={18} color="var(--hk-deeprose)"/>
                 </a>
               </div>
             </div>
 
-            {/* Logo grande con círculo bubblegum */}
             <div className="flex flex-col items-center justify-center">
               <div className="relative flex items-center justify-center">
-                <div
-                  aria-hidden="true"
-                  className="absolute rounded-full bg-[--bubblegum]
-                             w-[200px] h-[200px] sm:w-[230px] sm:h-[230px]"
-                />
+                <div aria-hidden="true"
+                     className="absolute rounded-full bg-[--bubblegum] w-[200px] h-[200px] sm:w-[230px] sm:h-[230px]" />
                 <div className="relative w-[360px] sm:w-[420px] aspect-[1.8/1] z-10">
                   <Image
                     src="/images/logo-white.webp"
@@ -710,7 +673,6 @@ export default function Page() {
               </div>
             </div>
 
-            {/* Newsletter */}
             <div className="flex flex-col justify-center text-left">
               <div className="font-display text-[13.5px] sm:text-[14px] tracking-[0.22em] uppercase mb-2">
                 {lang === 'en' ? 'Tied by threads' : 'Unidos por hilos'}
@@ -721,22 +683,14 @@ export default function Page() {
                   : 'Actualizaciones suaves, historias de color y freebies — solo puntadas bonitas.'}
               </p>
 
-              <form
-                onSubmit={(e)=>{e.preventDefault(); alert(lang==='en' ? 'Thanks for subscribing!' : '¡Gracias por suscribirte!');}}
-                className="font-sans flex flex-col gap-3"
-              >
-                <input
-                  type="email"
-                  required
-                  placeholder={lang === 'en' ? 'Email' : 'Correo'}
-                  className="w-full md:w-[420px] h-12 rounded-xl px-4 text-[15px]
-                             text-[--hk-deeprose] bg-white placeholder:text-[--hk-deeprose]/70
-                             border border-[--bubblegum] focus:outline-none focus:ring-2 focus:ring-[--hk-orange]/40"
-                />
-                <button
-                  className="w-full md:w-[420px] h-12 rounded-xl text-[12.5px] font-semibold uppercase tracking-[0.12em]
-                             bg-[--hk-deeprose] text-white hover:bg-[--hk-orange] btn-soft"
-                >
+              <form onSubmit={(e)=>{e.preventDefault(); alert(lang==='en' ? 'Thanks for subscribing!' : '¡Gracias por suscribirte!');}}
+                    className="font-sans flex flex-col gap-3">
+                <input type="email" required placeholder={lang === 'en' ? 'Email' : 'Correo'}
+                       className="w-full md:w-[420px] h-12 rounded-xl px-4 text-[15px]
+                                  text-[--hk-deeprose] bg-white placeholder:text-[--hk-deeprose]/70
+                                  border border-[--bubblegum] focus:outline-none focus:ring-2 focus:ring-[--hk-orange]/40" />
+                <button className="w-full md:w-[420px] h-12 rounded-xl text-[12.5px] font-semibold uppercase tracking-[0.12em]
+                                   bg-[--hk-deeprose] text-white hover:bg-[--hk-orange] btn-soft">
                   {lang === 'en' ? 'Subscribe' : 'Suscríbete'}
                 </button>
               </form>
