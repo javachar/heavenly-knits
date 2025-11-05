@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
-export async function GET(req) {
-  cookies().delete("hk-preview");
-  return NextResponse.redirect(new URL("/", req.url));
+export async function GET() {
+  const res = NextResponse.json({ ok: true });
+
+  // Borramos ambas
+  const gone = { path: "/", maxAge: 0 };
+  res.cookies.set("__hk_preview", "", gone);
+  res.cookies.set("hk-preview", "", gone);
+
+  return res;
 }
