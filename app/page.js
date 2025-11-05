@@ -378,34 +378,38 @@ export default function Page() {
         </div>
       </section>
 
-      {/* About / Meet the Artist (ACTUALIZADO) */}
-      <section id="about" className="max-w-6xl mx-auto px-4 py-20">
-        <h2 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight mb-8">
-          {t.about.title}
-        </h2>
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          {/* Foto vertical local */}
-          <div className="rounded-3xl overflow-hidden bg-white border border-[--graphite-100] shadow-md">
-            <div className="relative w-full aspect-[3/4]">
-              <Image
-                src="/images/artist/anguie-portrait.webp"
-                alt="Anguie Munoz — Heavenly Knits"
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          </div>
+      {/* About / Meet the Artist (BALANCEADO) */}
+<section id="about" className="max-w-6xl mx-auto px-4 py-20">
+  <h2 className="font-display text-[clamp(28px,2.4vw,40px)] font-semibold tracking-tight mb-8">
+    {t.about.title}
+  </h2>
 
-          {/* Texto nuevo */}
-          <div className="font-sans text-[16px] leading-7 text-[--graphite-700]">
-            <p className="mb-4">{t.about.p1}</p>
-            <p className="mb-4">{t.about.p2}</p>
-            <p>{t.about.p3}</p>
-          </div>
-        </div>
-      </section>
+  {/* Fijamos columna de imagen a 420px y el texto ocupa el resto */}
+  <div className="grid md:grid-cols-[420px_1fr] gap-10 items-start">
+    {/* Foto: vertical en mobile, cuadrada en md+ para equilibrar */}
+    <div className="rounded-3xl overflow-hidden bg-white border border-[--graphite-100] shadow-md">
+      <div className="relative w-full aspect-[3/4] md:aspect-square">
+        <Image
+          src="/images/artist/anguie-portrait.webp"
+          alt="Anguie Munoz — Heavenly Knits"
+          fill
+          priority
+          /* centramos un poquito más arriba para el corte cuadrado */
+          className="object-cover md:object-[50%_35%]"
+          sizes="(max-width: 768px) 100vw, 420px"
+        />
+      </div>
+    </div>
+
+    {/* Texto: mayor tamaño, línea cómoda y ancho controlado */}
+    <div className="font-sans max-w-[58ch] text-[clamp(16px,1.05vw,18px)] leading-[1.85] text-[--graphite-700]">
+      <p className="mb-4">{t.about.p1}</p>
+      <p className="mb-4">{t.about.p2}</p>
+      <p>{t.about.p3}</p>
+    </div>
+  </div>
+</section>
+
 
       {/* Blog */}
       <section id="blog" className="max-w-6xl mx-auto px-4 py-20">

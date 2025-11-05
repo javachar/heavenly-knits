@@ -2,6 +2,7 @@
 import "./globals.css";
 import localFont from "next/font/local";
 import { Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 
 const recoleta = localFont({
   src: [{ path: "../public/fonts/recoleta-alt-semibold.otf", weight: "600", style: "normal" }],
@@ -49,7 +50,10 @@ export default function RootLayout({ children }) {
           fetchpriority="high"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

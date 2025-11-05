@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Instagram, Youtube } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 
 const copyDict = {
   en: {
@@ -28,17 +29,19 @@ const copyDict = {
 
 export default function UnderConstructionPage() {
   const [lang, setLang] = useState('en');
+  const [ready, setReady] = useState(false);
   const t = copyDict[lang];
 
-  // Splash fade-in suave
-  const [ready, setReady] = useState(false);
   useEffect(() => {
-    const id = setTimeout(() => setReady(true), 250);
+    const id = setTimeout(() => setReady(true), 200);
     return () => clearTimeout(id);
   }, []);
 
   return (
-    <div className="min-h-screen grid place-items-center bg-[--hero] text-[--graphite-900]">
+    <div
+      className="min-h-screen grid place-items-center bg-[--hero] text-[--graphite-900]"
+      aria-label="Under construction screen"
+    >
       {/* Toggle idioma */}
       <button
         onClick={() => setLang(prev => (prev === 'en' ? 'es' : 'en'))}
@@ -49,17 +52,13 @@ export default function UnderConstructionPage() {
       </button>
 
       <div
-        className={`w-full max-w-[820px] px-6 text-center transition-all duration-500 ease-out
+        className={`w-full max-w-[860px] px-6 text-center transition-all duration-500 ease-out
                     ${ready ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}
       >
-        {/* LOGO GRANDE */}
+        {/* LOGO */}
         <div className="mx-auto mb-8 sm:mb-10">
           <div
-            className="
-              relative mx-auto
-              w-[300px] sm:w-[360px] md:w-[420px] lg:w-[500px]
-              aspect-[1.8/1]
-            "
+            className="relative mx-auto w-[320px] sm:w-[380px] md:w-[460px] lg:w-[560px] aspect-[1.8/1]"
             aria-hidden="true"
           >
             <Image
@@ -68,14 +67,13 @@ export default function UnderConstructionPage() {
               fill
               priority
               className="object-contain drop-shadow"
-              sizes="(max-width: 640px) 300px, (max-width: 768px) 360px, (max-width: 1024px) 420px, 500px"
+              sizes="(max-width: 640px) 320px, (max-width: 768px) 380px, (max-width: 1024px) 460px, 560px"
             />
           </div>
         </div>
 
-        {/* Texto principal */}
-        <h1 className="font-display font-semibold tracking-tight
-                       text-[28px] sm:text-[32px] md:text-[36px]">
+        {/* Texto */}
+        <h1 className="font-display font-semibold tracking-tight text-[26px] sm:text-[30px] md:text-[34px]">
           {t.title}
         </h1>
         <p className="mt-2 text-[--graphite-900]/80 text-[15px] sm:text-[16px]">
@@ -116,10 +114,11 @@ export default function UnderConstructionPage() {
         </p>
 
         {/* Línea de marca */}
-        <p className="mt-6 text-xs text-[--graphite-900]/60">
-          {t.brandLine}
-        </p>
+        <p className="mt-6 text-xs text-[--graphite-900]/60">{t.brandLine}</p>
       </div>
+
+      {/* Métricas de la pantalla UC */}
+      <Analytics />
     </div>
   );
 }
