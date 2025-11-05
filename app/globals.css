@@ -26,7 +26,13 @@
   :root{ --brand-bg:#0a0a0a; }
 }
 
-html, body { background: var(--brand-bg); color: var(--graphite-900); }
+/* ===== Base visual ===== */
+html, body {
+  background: var(--brand-bg);
+  color: var(--graphite-900);
+  height: 100%;
+  scroll-behavior: smooth; /* scroll suave global */
+}
 
 /* Fuentes: mapea variables -> familias */
 .font-display { font-family: var(--font-recoleta), ui-serif, Georgia, serif; }
@@ -54,7 +60,7 @@ html, body { background: var(--brand-bg); color: var(--graphite-900); }
 .btn-ghost:hover { background: var(--graphite-100); }
 .badge-round { @apply inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold; background: #135D3B; color:#fff; }
 
-/* Compensación de scroll por header (pegajoso, 64px de alto) */
+/* Compensación de scroll por header (pegajoso, ~64px de alto) */
 .section-anchor{ scroll-margin-top: 104px; }
 
 /* Sombras suaves tipo tarjeta */
@@ -123,4 +129,20 @@ html, body { background: var(--brand-bg); color: var(--graphite-900); }
   font-size: 15px;
   line-height: 1.8;
   opacity: .95;
+}
+
+/* =========================================================
+   SCROLL FULL-PAGE (tipo StayCrafty): snap + 100svh
+   ========================================================= */
+.snap-container{
+  /* El contenedor principal que envuelve las secciones a pantalla completa */
+  scroll-snap-type: y mandatory;
+}
+
+.snap-section{
+  /* Cada sección que debe ocupar toda la pantalla y hacer snap */
+  min-height: 100svh;          /* corrige en móviles con barra de URL */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: block;
 }
