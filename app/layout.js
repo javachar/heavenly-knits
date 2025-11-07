@@ -35,22 +35,36 @@ export const metadata = {
 };
 
 // evita el warning de Next: themeColor va en viewport
-export const viewport = { themeColor: "#FFF7F2" };
+export const viewport = { themeColor: "#FFFFFF" };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${recoleta.variable} ${poppins.variable}`}>
+    <html
+      lang="en"
+      className={`${recoleta.variable} ${poppins.variable}`}
+      style={{ background: "#fff", colorScheme: "light" }}
+      suppressHydrationWarning
+    >
       <head>
-        {/* Precarga del logo (WebP) para que aparezca instantáneo al salir del splash */}
-        <link
-          rel="preload"
-          as="image"
-          href="/images/logo-white.webp"
-          type="image/webp"
-          fetchpriority="high"
+        {/* CSS crítico inline: asegura primer paint blanco y tema claro */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root { color-scheme: light only; }
+              html, body, #__next, [data-nextjs-root] { background:#fff !important; }
+              @media (prefers-color-scheme: dark) {
+                html, body { background:#fff !important; }
+              }
+            `,
+          }}
         />
+        <meta name="color-scheme" content="light only" />
+        <meta name="theme-color" content="#ffffff" />
+
+        {/* Precarga del logo (WebP) para que aparezca instantáneo al salir del splash */}
+        <link rel="preload" as="image" href="/images/logo-white.webp" type="image/webp" />
       </head>
-      <body>
+      <body style={{ background: "#fff" }}>
         {children}
         <Analytics />
       </body>

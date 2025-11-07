@@ -4,6 +4,7 @@
 
 /* ===== Colores de Heavenly Knits ===== */
 :root{
+  color-scheme: light only;
   --pinkBrand:#F6A3C0;
   --coral:#FF8F70;
   --mango:#FFB341;
@@ -20,10 +21,7 @@
   --hk-orange: #FF7A21;     /* hover/acento cálido */
   --hk-mint: #79E0D1;       /* chip fresco (socials) */
   --hk-lavender: #C6A7F0;   /* chip fresco (socials) */
-}
-
-@media (prefers-color-scheme: dark){
-  :root{ --brand-bg:#0a0a0a; }
+  --brand-rose: #FE98B6; /* nombre-rosa para el brand en el navbar */
 }
 
 /* ===== Base visual ===== */
@@ -66,27 +64,43 @@ html, body {
 /* Sombras suaves tipo tarjeta */
 .card { @apply bg-white rounded-3xl border border-[--graphite-100] shadow-md overflow-hidden; }
 
-/* ===== Subrayado tipo línea gruesa del color del hero ===== */
-.nav-link-line{
+/* ===== Nav link + subrayado con grosor constante ===== */
+.nav-link{
   position: relative;
-  display: inline-block;
-  padding-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  line-height: 1;
+  padding: 0 .25rem;
 }
-.nav-link-line::after{
+
+.nav-link::after{
   content:"";
-  position:absolute;
-  left:0; right:0; bottom:-6px;
-  height:4px;                        /* más gruesa */
-  background: var(--hero);           /* mismo color del hero */
-  border-radius:9999px;
-  transform-origin:left center;
-  transform:scaleX(0);
-  transition:transform .28s ease;
+  position: absolute;
+  left: 0;                /* ocupa el ancho del texto */
+  bottom: -4px;
+  width: 0;               /* animamos el ancho en vez de transform */
+  height: 4px;            /* grosor fijo */
+  background: var(--hero);/* mismo color del hero */
+  border-radius: 9999px;
+  transition: width .28s ease;
+  will-change: width;
 }
-.nav-link-line:hover::after,
-.nav-link-line:focus-visible::after{
-  transform:scaleX(1);
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after{
+  width: 100%;
 }
+
+/* Estado activo del scroll spy */
+.nav-link.is-active {
+  color: var(--graphite-900);
+}
+.nav-link.is-active::after {
+  width: 100%;
+}
+
+
 
 /* ===== Splash loader (anillo del color del hero) ===== */
 .splash-loader{ position: relative; width: 88px; height: 88px; }
