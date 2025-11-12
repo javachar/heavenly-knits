@@ -1,10 +1,14 @@
 // next.config.mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // lo que ya tenías…
+  // ejemplo:
+  experimental: { optimizeCss: true },
   images: {
-    formats: ['image/avif', 'image/webp'],
+    // solo si algún día usas next/image con dominios externos
     remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: 'https', hostname: '**.cdninstagram.com' },
+      { protocol: 'https', hostname: 'scontent.cdninstagram.com' },
     ],
   },
 };

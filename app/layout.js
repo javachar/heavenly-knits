@@ -41,30 +41,23 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${recoleta.variable} ${poppins.variable}`}
-      style={{ background: "#fff", colorScheme: "light" }}
-      suppressHydrationWarning
+      className={`${recoleta.variable} ${poppins.variable} bg-white`}
     >
       <head>
-        {/* CSS crítico inline: asegura primer paint blanco y tema claro */}
+        {/* CSS estable (sin valores distintos entre SSR/CSR) */}
         <style
           dangerouslySetInnerHTML={{
             __html: `
               :root { color-scheme: light only; }
-              html, body, #__next, [data-nextjs-root] { background:#fff !important; }
-              @media (prefers-color-scheme: dark) {
-                html, body { background:#fff !important; }
-              }
+              html, body { background:#fff; }
             `,
           }}
         />
         <meta name="color-scheme" content="light only" />
         <meta name="theme-color" content="#ffffff" />
-
-        {/* Precarga del logo (WebP) para que aparezca instantáneo al salir del splash */}
         <link rel="preload" as="image" href="/images/logo-white.webp" type="image/webp" />
       </head>
-      <body style={{ background: "#fff" }}>
+      <body className="bg-white text-[--graphite-900]">
         {children}
         <Analytics />
       </body>
