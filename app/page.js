@@ -28,7 +28,7 @@ const BLUR =
 
 const i18n = {
   en: {
-    nav: { home: "Home", catalog: "Catalog", about: "About", instagram: "Instagram", contact: "Contact" },
+    nav: { home: "Home", catalog: "Catalog", about: "About", instagram: "Instagram", contact: "Contact", join: "Join" },
     catalog: { title: "Catalog", badge: "Made by Anguie", buy: "Buy", enquire: "Enquire", colors: "Colors", materials: "Materials", size: "Size" },
     about: {
       title: "Meet the Artist",
@@ -42,7 +42,7 @@ const i18n = {
     lang: "ES"
   },
   es: {
-    nav: { home: "Inicio", catalog: "Catálogo", about: "Acerca", instagram: "Instagram", contact: "Contacto" },
+    nav: { home: "Inicio", catalog: "Catálogo", about: "Acerca", instagram: "Instagram", contact: "Contacto", join: "Unete" },
     catalog: { title: "Catálogo", badge: "Hecho por Anguie", buy: "Comprar", enquire: "Encargar", colors: "Colores", materials: "Materiales", size: "Tamaño" },
     about: {
       title: "Conoce a la Artista",
@@ -370,6 +370,16 @@ export default function Page() {
             >
               <Languages size={16} /> {t.lang}
             </button>
+
+            {/* JOIN (CTA) */}
+              <a
+                href="/join"
+                className="ml-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[--hk-deeprose] text-white text-sm font-semibold shadow-sm hover:brightness-95 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--hk-deeprose]/30"
+                aria-label="Open Join page"
+              >
+                {t.nav.join}
+              </a>
+
           </div>
 
           {/* Menú móvil */}
@@ -385,6 +395,16 @@ export default function Page() {
                   {t.nav[id]}
                 </button>
               ))}
+
+              {/* JOIN en móvil */}
+                <a
+                  href="/join"
+                  className="inline-flex items-center rounded-full px-3.5 py-1.5 bg-[--hk-deeprose] text-white text-[12.5px] font-semibold"
+                  aria-label="Open Join page"
+                >
+                  {t.nav.join}
+                </a>
+
             </div>
           </div>
         </div>
