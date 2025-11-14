@@ -3,77 +3,89 @@
 import Head from 'next/head';
 import { useState } from 'react';
 
-// Links de marca (para los íconos de abajo)
+// Links de marca
 const SETTINGS = {
   instagram: 'https://www.instagram.com/heavenlyknits.co',
   youtube: 'https://www.youtube.com/@HeavenlyKnits',
 };
 
-// Textos EN/ES (EN por defecto)
+// Textos EN/ES
 const i18n = {
   en: {
     title: 'Join the Heavenly Knits Family 💕',
     desc: 'Be the first to know about new handmade designs, behind-the-scenes stories, and freebies. No spam.',
     placeholder: 'you@email.com',
-    btn: 'Subscribe',
-    sending: 'Sending…',
-    ok: "You're in! Check your inbox ✨",
+    button: 'Subscribe',
+    buttonLoading: 'Subscribing…',
+    ok: "You’re in! Check your inbox 💌",
     errInvalid: 'Please enter a valid email.',
     errNet: 'Network error. Try again.',
-    legal:
+    consent:
       'By subscribing, you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
     instagram: 'Instagram',
     youtube: 'YouTube',
-    lang: 'ES',
+    langToggleLabel: 'ES',
+    langToggleAria: 'View this page in Spanish',
   },
   es: {
     title: 'Únete a la familia Heavenly Knits 💕',
-    desc: 'Sé el primero en enterarte de nuevos diseños, historias detrás de escena y regalitos. Cero spam.',
+    desc: 'Sé la primera en enterarte de nuevos diseños hechos a mano, historias detrás de cámaras y regalitos. Sin spam.',
     placeholder: 'tu@email.com',
-    btn: 'Suscribirme',
-    sending: 'Enviando…',
-    ok: '¡Listo! Revisa tu correo ✨',
-    errInvalid: 'Ingresa un correo válido.',
-    errNet: 'Error de red. Intenta de nuevo.',
-    legal:
-      'Al suscribirte aceptas recibir emails de Heavenly Knits. Puedes darte de baja cuando quieras.',
+    button: 'Suscribirme',
+    buttonLoading: 'Enviando…',
+    ok: '¡Listo! Ya estás en la lista 💌',
+    errInvalid: 'Por favor escribe un correo válido.',
+    errNet: 'Error de red. Inténtalo de nuevo.',
+    consent:
+      'Al suscribirte aceptas recibir correos de Heavenly Knits. Puedes darte de baja cuando quieras.',
     instagram: 'Instagram',
     youtube: 'YouTube',
-    lang: 'EN',
+    langToggleLabel: 'EN',
+    langToggleAria: 'Ver esta página en inglés',
   },
 };
 
 export default function JoinPage() {
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState<'en' | 'es'>('en');
   const t = i18n[lang];
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState(null); // { type: 'ok'|'err', text: string }
+  const [msg, setMsg] = useState<null | { type: 'ok' | 'err'; text: string }>(
+    null
+  );
 
   async function onSubmit(e) {
     e.preventDefault();
     setMsg(null);
 
     const v = email.trim().toLowerCase();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!re.test(v)) {
       setMsg({ type: 'err', text: t.errInvalid });
       return;
     }
 
     setLoading(true);
     try {
-      const r = await fetch('/api/brevo/subscribe', {
+      // 👇 Ahora sí apunta a tu API real: /api/join
+      const res = await fetch('/api/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: v }),
       });
-      const j = await r.json();
-      if (r.ok && j?.ok) {
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.ok) {
         setMsg({ type: 'ok', text: t.ok });
         setEmail('');
       } else {
-        setMsg({ type: 'err', text: j?.error || t.errNet });
+        setMsg({
+          type: 'err',
+          text: data?.error || t.errNet,
+        });
       }
     } catch {
       setMsg({ type: 'err', text: t.errNet });
@@ -84,111 +96,103 @@ export default function JoinPage() {
 
   return (
     <>
-      {/* Meta para NO indexar esta página */}
       <Head>
-        <meta name="robots" content="noindex,nofollow" />
-        <link rel="canonical" href="https://heavenlyknits.com/" />
-
-        {/* Poppins desde Google */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
-          rel="stylesheet"
+        <title>{t.title}</title>
+        <meta
+          name="description"
+          content="Email list for Heavenly Knits — handmade yarn accessories and cozy designs."
         />
-
-        {/* Recoleta Alt Semibold desde /public (no import de módulo) */}
-        <style>{`
-          @font-face {
-            font-family: 'RecoletaAlt';
-            src: url('/fonts/recoleta-alt-semibold.otf') format('opentype');
-            font-weight: 600;
-            font-style: normal;
-            font-display: swap;
-          }
-          :root {
-            --join-card-shadow: 0 14px 28px rgba(0,0,0,0.06), 0 8px 12px rgba(0,0,0,0.04);
-          }
-          .title-recoleta { font-family: 'RecoletaAlt', ui-serif, Georgia, serif; }
-          .copy-poppins { font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
-        `}</style>
       </Head>
 
-      {/* Fondo estilo hero (sin navbar) */}
+      {/* Fondo rosa suave */}
       <div
         className="min-h-screen text-[--graphite-900]"
         style={{
           background:
-            'linear-gradient(180deg, var(--brand-bg) 0%, rgba(255,255,255,0) 40%), var(--hero)',
+            'linear-gradient(180deg, #ffd5e6 0%, #ffeaf2 45%, #ffffff 100%)',
         }}
       >
-        {/* Toggle de idioma discreto (arriba-derecha) */}
+        {/* Toggle de idioma (arriba a la derecha) */}
         <button
-          onClick={() => setLang((p) => (p === 'en' ? 'es' : 'en'))}
-          className="fixed top-4 right-4 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-white/60 bg-white/70 backdrop-blur text-sm hover:bg-white shadow"
-          aria-label="Toggle language"
+          type="button"
+          onClick={() => setLang((prev) => (prev === 'en' ? 'es' : 'en'))}
+          className="fixed top-4 right-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/80 px-3 py-1 text-xs font-medium text-[--graphite-600] shadow-sm backdrop-blur hover:bg-white"
+          aria-label={t.langToggleAria}
         >
-          {t.lang}
+          {t.langToggleLabel}
         </button>
 
         {/* Contenido centrado */}
-        <main className="min-h-[calc(100svh-0px)] grid place-items-center px-4 py-10">
-          <div
-            className="max-w-lg w-full bg-white border border-[--graphite-100] rounded-3xl p-8"
-            style={{ boxShadow: 'var(--join-card-shadow)' }}
-          >
-            <h1 className="title-recoleta text-[24px] sm:text-[26px] font-semibold mb-2">
+        <main className="min-h-screen flex items-center justify-center px-4 py-8">
+          <div className="w-full max-w-md rounded-3xl bg-white/90 p-6 shadow-xl backdrop-blur-md sm:p-8">
+            {/* Título */}
+            <h1 className="mb-3 text-center text-2xl font-semibold tracking-tight text-[--graphite-900] sm:text-3xl">
               {t.title}
             </h1>
 
-            <p className="copy-poppins text-[--graphite-700] text-[15px] leading-relaxed mb-6">
+            {/* Descripción */}
+            <p className="mb-6 text-center text-sm text-[--graphite-600] sm:text-base">
               {t.desc}
             </p>
 
-            <form onSubmit={onSubmit} className="copy-poppins flex gap-3">
-              <input
-                type="email"
-                required
-                placeholder={t.placeholder}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 h-12 rounded-xl px-4 border border-[--graphite-200] focus:outline-none focus:ring-2 focus:ring-[--hk-deeprose]/30"
-              />
+            {/* Formulario */}
+            <form onSubmit={onSubmit} className="space-y-3">
+              <label className="block text-xs font-medium text-[--graphite-600]">
+                Email
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t.placeholder}
+                  className="mt-1 w-full rounded-full border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none ring-0 transition focus:border-[--pinkBrand] focus:ring-2 focus:ring-[--pinkBrand]/40"
+                  required
+                />
+              </label>
+
+              {/* Mensajes de estado */}
+              {msg && (
+                <p
+                  className={`text-xs ${
+                    msg.type === 'ok'
+                      ? 'text-emerald-600'
+                      : 'text-rose-600'
+                  }`}
+                >
+                  {msg.text}
+                </p>
+              )}
+
+              {/* Botón */}
               <button
+                type="submit"
                 disabled={loading}
-                className="h-12 px-5 rounded-xl bg-[--hk-deeprose] text-white font-semibold disabled:opacity-60 hover:brightness-95 active:scale-[0.99]"
+                className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-[--pinkBrand] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[--raspberry] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {loading ? t.sending : t.btn}
+                {loading ? t.buttonLoading : t.button}
               </button>
             </form>
 
-            {msg && (
-              <div
-                className={`copy-poppins mt-4 text-sm ${
-                  msg.type === 'ok' ? 'text-green-700' : 'text-red-600'
-                }`}
-              >
-                {msg.text}
-              </div>
-            )}
+            {/* Consentimiento / texto pequeño */}
+            <p className="mt-4 text-center text-[11px] leading-snug text-[--graphite-600]">
+              {t.consent}
+            </p>
 
-            <p className="copy-poppins mt-4 text-xs text-[--graphite-500]">{t.legal}</p>
-
-            <div className="copy-poppins mt-6 flex items-center gap-3 text-[--graphite-600]">
+            {/* Links sociales */}
+            <div className="mt-6 flex items-center justify-center gap-4 text-xs font-medium text-[--graphite-600]">
               <a
                 href={SETTINGS.instagram}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 hover:text-[--graphite-900]"
+                className="inline-flex items-center gap-1 hover:text-[--graphite-900]"
               >
                 {t.instagram}
               </a>
-              <span className="opacity-40">•</span>
+              <span className="text-[--graphite-300]">•</span>
               <a
                 href={SETTINGS.youtube}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 hover:text-[--graphite-900]"
+                className="inline-flex items-center gap-1 hover:text-[--graphite-900]"
               >
                 {t.youtube}
               </a>
