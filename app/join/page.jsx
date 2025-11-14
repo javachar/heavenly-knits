@@ -1,9 +1,32 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
+import Link from 'next/link';
+import localFont from 'next/font/local';
+import { Poppins } from 'next/font/google';
 import { Languages, Instagram as InstaIcon, Youtube } from 'lucide-react';
 
+// ===== Fuentes =====
+const recoleta = localFont({
+  src: [
+    {
+      path: '/fonts/RecoletaAlt-Semibold.woff2', // <-- asegúrate del nombre
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-recoleta',
+  display: 'swap',
+});
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400','500','600'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+// ===== Config & i18n =====
 const SETTINGS = {
   brand: 'Heavenly Knits',
   instagram: 'https://www.instagram.com/heavenlyknits.co',
@@ -12,7 +35,6 @@ const SETTINGS = {
 
 const i18n = {
   en: {
-    nav: { home: 'Home', catalog: 'Catalog', about: 'About', instagram: 'Instagram', contact: 'Contact', join: 'Join' },
     title: 'Join the Heavenly Knits Family 💕',
     desc: 'Be the first to know about new handmade designs, behind-the-scenes stories, and freebies. No spam.',
     placeholder: 'you@email.com',
@@ -22,10 +44,8 @@ const i18n = {
     errInvalid: 'Please enter a valid email.',
     errNet: 'Network error. Try again.',
     legal: 'By subscribing you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
-    langBtn: 'ES',
   },
   es: {
-    nav: { home: 'Inicio', catalog: 'Catálogo', about: 'Acerca', instagram: 'Instagram', contact: 'Contacto', join: 'Únete' },
     title: 'Únete a la familia Heavenly Knits 💕',
     desc: 'Sé el primero en enterarte de nuevos diseños, historias detrás de escena y regalitos. Cero spam.',
     placeholder: 'tu@email.com',
@@ -35,13 +55,11 @@ const i18n = {
     errInvalid: 'Ingresa un correo válido.',
     errNet: 'Error de red. Intenta de nuevo.',
     legal: 'Al suscribirte aceptas recibir emails de Heavenly Knits. Puedes darte de baja cuando quieras.',
-    langBtn: 'EN',
   },
 };
 
 export default function JoinPage() {
-  // English by default
-  const [lang, setLang] = useState('en');
+  const [lang, setLang] = useState('en'); // EN por defecto
   const t = i18n[lang];
 
   const [email, setEmail] = useState('');
@@ -60,16 +78,12 @@ export default function JoinPage() {
 
     setLoading(true);
     try {
-      // Brevo handler -> /app/api/join/route.js
-      const r = await fetch('/api/join', {
+      const r = await fetch('/api/brevo/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: v }),
       });
-
-      // intenta parsear JSON (si la ruta devolvió HTML por error, esto lanzará)
-      const j = await r.json().catch(() => ({}));
-
+      const j = await r.json();
       if (r.ok && j?.ok) {
         setMsg({ type: 'ok', text: t.ok });
         setEmail('');
@@ -84,68 +98,44 @@ export default function JoinPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[--hero] text-[--graphite-900]">
-      {/* soft veil like the hero */}
+    <div
+      className={`${poppins.variable} ${recoleta.variable} min-h-screen bg-[--hero] text-[--graphite-900]`}
+      style={{ fontFamily: 'var(--font-poppins), ui-sans-serif, system-ui' }}
+    >
+      {/* velo suave como el hero */}
       <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--brand-bg)', opacity: 0.08 }} />
 
-      {/* ===== HEADER ===== */}
-      <header className="sticky top-0 z-50 bg-white/60 backdrop-blur-md shadow-sm">
-        <div className="relative">
-          <div className="max-w-6xl mx-auto h-[72px] px-4 flex items-center gap-4 relative">
-            {/* BRAND */}
-            <Link href="/" className="flex items-center gap-3 shrink-0 z-10">
-              <span className="font-display font-semibold text-[20px] sm:text-[22px] md:text-[24px] text-[--brand-rose]">
-                {SETTINGS.brand}
-              </span>
-            </Link>
+      {/* Botón idioma (no navbar) */}
+      <div className="fixed top-4 right-4 z-10">
+        <button
+          onClick={() => setLang((p) => (p === 'en' ? 'es' : 'en'))}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[--graphite-100] bg-white/70 backdrop-blur text-sm hover:bg-white shadow-sm"
+          aria-label="Toggle language"
+        >
+          <Languages size={16} /> {lang === 'en' ? 'ES' : 'EN'}
+        </button>
+      </div>
 
-            {/* centered NAV (anchors back to /) */}
-            <nav className="hidden md:flex items-center md:gap-6 lg:gap-8 text-[15px] normal-case tracking-wide font-sans absolute left-1/2 -translate-x-1/2">
-              <Link href="/#home" className="nav-link text-[--graphite-600] hover:text-[--graphite-900]">{t.nav.home}</Link>
-              <Link href="/#catalog" className="nav-link text-[--graphite-600] hover:text-[--graphite-900]">{t.nav.catalog}</Link>
-              <Link href="/#about" className="nav-link text-[--graphite-600] hover:text-[--graphite-900]">{t.nav.about}</Link>
-              <Link href="/#instagram" className="nav-link text-[--graphite-600] hover:text-[--graphite-900]">{t.nav.instagram}</Link>
-              <Link href="/#contact" className="nav-link text-[--graphite-600] hover:text-[--graphite-900]">{t.nav.contact}</Link>
-            </nav>
-
-            {/* Lang switch + Join */}
-            <button
-              className="ml-auto inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[--graphite-100] text-sm hover:bg-white/50 font-sans z-10"
-              onClick={() => setLang(prev => (prev === 'en' ? 'es' : 'en'))}
-              aria-label="Toggle language"
-            >
-              <Languages size={16} /> {t.langBtn}
-            </button>
-
-            <Link
-              href="/join"
-              className="ml-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[--hk-deeprose] text-white text-sm font-semibold shadow-sm hover:brightness-95 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[--hk-deeprose]/30"
-            >
-              {t.nav.join}
-            </Link>
-          </div>
-
-          {/* mobile menu */}
-          <div className="md:hidden overflow-x-auto px-4 pb-2 -mt-1 relative z-10">
-            <div className="flex gap-5 text-[14px] normal-case tracking-wide text-[--graphite-600] font-sans">
-              <Link href="/#home" className="nav-link hover:text-[--graphite-900]">{t.nav.home}</Link>
-              <Link href="/#catalog" className="nav-link hover:text-[--graphite-900]">{t.nav.catalog}</Link>
-              <Link href="/#about" className="nav-link hover:text-[--graphite-900]">{t.nav.about}</Link>
-              <Link href="/#instagram" className="nav-link hover:text-[--graphite-900]">{t.nav.instagram}</Link>
-              <Link href="/#contact" className="nav-link hover:text-[--graphite-900]">{t.nav.contact}</Link>
-              <Link href="/join" className="inline-flex items-center rounded-full px-3.5 py-1.5 bg-[--hk-deeprose] text-white text-[12.5px] font-semibold">
-                {t.nav.join}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ===== MAIN ===== */}
-      <main className="min-h-[calc(100svh-72px)] grid place-items-center px-4 py-10">
+      {/* Contenido centrado */}
+      <main className="min-h-[calc(100svh)] grid place-items-center px-4 py-10">
         <div className="max-w-lg w-full bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-sm">
-          <h1 className="text-2xl font-bold mb-2">{t.title}</h1>
-          <p className="text-[--graphite-600] mb-6">{t.desc}</p>
+          {/* Título con Recoleta */}
+          <h1
+            className="mb-2"
+            style={{
+              fontFamily: 'var(--font-recoleta), ui-serif, Georgia',
+              fontWeight: 600,
+              fontSize: 'clamp(28px, 2.2vw, 36px)',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            {t.title}
+          </h1>
+
+          {/* Descripción con Poppins */}
+          <p className="text-[--graphite-600] mb-6">
+            {t.desc}
+          </p>
 
           <form onSubmit={onSubmit} className="flex gap-3">
             <input
@@ -170,8 +160,11 @@ export default function JoinPage() {
             </div>
           )}
 
-          <p className="mt-4 text-xs text-[--graphite-500]">{t.legal}</p>
+          <p className="mt-4 text-xs text-[--graphite-500]">
+            {t.legal}
+          </p>
 
+          {/* Social (opcional) */}
           <div className="mt-6 flex items-center gap-3 text-[--graphite-600]">
             <a href={SETTINGS.instagram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-[--graphite-900]">
               <InstaIcon size={16} /> Instagram
@@ -180,6 +173,13 @@ export default function JoinPage() {
             <a href={SETTINGS.youtube} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-[--graphite-900]">
               <Youtube size={16} /> YouTube
             </a>
+          </div>
+
+          {/* Link de regreso (sin navbar) */}
+          <div className="mt-6 text-sm">
+            <Link href="/" className="underline hover:opacity-80">
+              ← {lang === 'en' ? 'Back to home' : 'Volver al inicio'}
+            </Link>
           </div>
         </div>
       </main>
