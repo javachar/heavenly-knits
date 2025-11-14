@@ -46,14 +46,12 @@ const i18n = {
 };
 
 export default function JoinPage() {
-  const [lang, setLang] = useState<'en' | 'es'>('en');
+  const [lang, setLang] = useState('en');
   const t = i18n[lang];
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState<null | { type: 'ok' | 'err'; text: string }>(
-    null
-  );
+  const [msg, setMsg] = useState(null); // { type: 'ok' | 'err', text: string }
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -69,25 +67,30 @@ export default function JoinPage() {
 
     setLoading(true);
     try {
-      // 👇 Ahora sí apunta a tu API real: /api/join
+      // 👇 Endpoint real que ya tienes en app/api/join/route.js
       const res = await fetch('/api/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: v }),
       });
 
-      const data = await res.json().catch(() => null);
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (_) {
+        data = null;
+      }
 
-      if (res.ok && data?.ok) {
+      if (res.ok && data && data.ok) {
         setMsg({ type: 'ok', text: t.ok });
         setEmail('');
       } else {
         setMsg({
           type: 'err',
-          text: data?.error || t.errNet,
+          text: (data && data.error) || t.errNet,
         });
       }
-    } catch {
+    } catch (err) {
       setMsg({ type: 'err', text: t.errNet });
     } finally {
       setLoading(false);
@@ -102,6 +105,8 @@ export default function JoinPage() {
           name="description"
           content="Email list for Heavenly Knits — handmade yarn accessories and cozy designs."
         />
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://heavenlyknits.com/join" />
       </Head>
 
       {/* Fondo rosa suave */}
@@ -112,7 +117,7 @@ export default function JoinPage() {
             'linear-gradient(180deg, #ffd5e6 0%, #ffeaf2 45%, #ffffff 100%)',
         }}
       >
-        {/* Toggle de idioma (arriba a la derecha) */}
+        {/* Toggle idioma (arriba derecha) */}
         <button
           type="button"
           onClick={() => setLang((prev) => (prev === 'en' ? 'es' : 'en'))}
@@ -125,17 +130,14 @@ export default function JoinPage() {
         {/* Contenido centrado */}
         <main className="min-h-screen flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-md rounded-3xl bg-white/90 p-6 shadow-xl backdrop-blur-md sm:p-8">
-            {/* Título */}
             <h1 className="mb-3 text-center text-2xl font-semibold tracking-tight text-[--graphite-900] sm:text-3xl">
               {t.title}
             </h1>
 
-            {/* Descripción */}
             <p className="mb-6 text-center text-sm text-[--graphite-600] sm:text-base">
               {t.desc}
             </p>
 
-            {/* Formulario */}
             <form onSubmit={onSubmit} className="space-y-3">
               <label className="block text-xs font-medium text-[--graphite-600]">
                 Email
@@ -149,7 +151,6 @@ export default function JoinPage() {
                 />
               </label>
 
-              {/* Mensajes de estado */}
               {msg && (
                 <p
                   className={`text-xs ${
@@ -162,7 +163,6 @@ export default function JoinPage() {
                 </p>
               )}
 
-              {/* Botón */}
               <button
                 type="submit"
                 disabled={loading}
@@ -172,12 +172,10 @@ export default function JoinPage() {
               </button>
             </form>
 
-            {/* Consentimiento / texto pequeño */}
             <p className="mt-4 text-center text-[11px] leading-snug text-[--graphite-600]">
               {t.consent}
             </p>
 
-            {/* Links sociales */}
             <div className="mt-6 flex items-center justify-center gap-4 text-xs font-medium text-[--graphite-600]">
               <a
                 href={SETTINGS.instagram}
