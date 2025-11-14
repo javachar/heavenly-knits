@@ -30,6 +30,34 @@ export async function POST(req) {
     const listIdNumber = Number(BREVO_LIST_ID);
     const listIds = Number.isNaN(listIdNumber) ? [] : [listIdNumber];
 
+    // 1) Ver si el contacto YA existe en Brevo
+    let already = false;
+    try {
+      const checkRes = await fetch(
+        `https://api.brevo.com/v3/contacts/${encodeURIComponent(v)}`,
+        {
+          method: "GET",
+          headers: {
+            "api-key": BREVO_API_KEY,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (checkRes.ok) {
+        // 200 -> el contacto ya existe
+        already = true;
+      } else if (checkRes.status === 404) {
+        // 404 -> no existe, lo trataremos como nuevo
+        already = false;
+      }
+      // Si hay otro status, seguimos igual y que el POST decida
+    } catch {
+      // Si falla el GET, no rompemos el flujo: seguimos como si no supiéramos
+      already = false;
+    }
+
+    // 2) Crear o actualizar el contacto
     const payload = {
       email: v,
       attributes: {
@@ -61,7 +89,8 @@ export async function POST(req) {
 
     if (!res.ok) {
       const message =
-        (data && (data.message || data.error)) || `Brevo error (status ${res.status})`;
+        (data && (data.message || data.error)) ||
+        `Brevo error (status ${res.status})`;
       const code = data && data.code;
 
       const lowerMsg = typeof message === "string" ? message.toLowerCase() : "";
@@ -72,7 +101,7 @@ export async function POST(req) {
         lowerMsg.includes("contact already") ||
         lowerMsg.includes("duplicate");
 
-      // 👉 Ya estaba suscrito, lo tratamos como éxito especial
+      // Si Brevo dice duplicado, marcamos como ya suscrito igualmente
       if (isDuplicate) {
         return NextResponse.json(
           { ok: true, already: true },
@@ -80,15 +109,17 @@ export async function POST(req) {
         );
       }
 
-      // Otros errores reales
       return NextResponse.json(
         { ok: false, error: message || "Brevo error" },
         { status: 400 }
       );
     }
 
-    // Nuevo contacto o actualización correcta
-    return NextResponse.json({ ok: true }, { status: 200 });
+    // 3) Responder al frontend: ok + si ya estaba antes o no
+    return NextResponse.json(
+      { ok: true, already },
+      { status: 200 }
+    );
   } catch (e) {
     return NextResponse.json(
       { ok: false, error: e?.message || "server-error" },
