@@ -180,33 +180,39 @@ export default function JoinPage() {
               {t.consent}
             </p>
 
-            {/* Redes sociales: sección más grande */}
-            <div className="mt-6">
-              <p className="text-center text-xs font-semibold tracking-wide text-[--graphite-500] uppercase">
+            {/* Redes sociales: sección más protagonista */}
+            <div className="mt-7">
+              <p className="text-center text-[11px] font-semibold tracking-[0.18em] text-[--graphite-500] uppercase">
                 {t.socialTitle}
               </p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+                {/* Instagram */}
                 <a
                   href={SETTINGS.instagram}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-[--graphite-100] bg-[--ivory] px-4 py-2 text-sm font-medium text-[--graphite-700] hover:border-[--pinkBrand] hover:bg-pink-50 hover:text-[--graphite-900] transition"
+                  className="flex-1 inline-flex items-center justify-center rounded-full bg-[--bubblegum] px-4 py-2.5 text-sm font-semibold text-[--graphite-900] shadow-sm hover:bg-[--pinkBrand] hover:shadow-md transition"
                 >
                   {t.instagram}
                 </a>
+
+                {/* YouTube */}
                 <a
                   href={SETTINGS.youtube}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-[--graphite-100] bg-[--ivory] px-4 py-2 text-sm font-medium text-[--graphite-700] hover:border-[--pinkBrand] hover:bg-pink-50 hover:text-[--graphite-900] transition"
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#ff7a7a] bg-white px-4 py-2.5 text-sm font-semibold text-[#d62828] shadow-sm hover:bg-[#ffecec] hover:shadow-md transition"
                 >
                   {t.youtube}
                 </a>
+
+                {/* TikTok */}
                 <a
                   href={SETTINGS.tiktok}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-[--graphite-100] bg-[--ivory] px-4 py-2 text-sm font-medium text-[--graphite-700] hover:border-[--pinkBrand] hover:bg-pink-50 hover:text-[--graphite-900] transition"
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#25f4ee] bg-[--graphite-900] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-black hover:shadow-md transition"
                 >
                   {t.tiktok}
                 </a>
