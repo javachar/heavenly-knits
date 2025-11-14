@@ -28,9 +28,7 @@ export async function POST(req) {
     }
 
     const listIdNumber = Number(BREVO_LIST_ID);
-    const listIds = Number.isNaN(listIdNumber)
-      ? []
-      : [listIdNumber];
+    const listIds = Number.isNaN(listIdNumber) ? [] : [listIdNumber];
 
     const payload = {
       email: v,
@@ -62,15 +60,34 @@ export async function POST(req) {
     }
 
     if (!res.ok) {
-      const msg =
-        (data && (data.message || data.error)) ||
-        `Brevo error (status ${res.status})`;
+      const message =
+        (data && (data.message || data.error)) || `Brevo error (status ${res.status})`;
+      const code = data && data.code;
+
+      const lowerMsg = typeof message === "string" ? message.toLowerCase() : "";
+      const isDuplicate =
+        code === "duplicate_parameter" ||
+        lowerMsg.includes("already exist") ||
+        lowerMsg.includes("already exists") ||
+        lowerMsg.includes("contact already") ||
+        lowerMsg.includes("duplicate");
+
+      // 👉 Ya estaba suscrito, lo tratamos como éxito especial
+      if (isDuplicate) {
+        return NextResponse.json(
+          { ok: true, already: true },
+          { status: 200 }
+        );
+      }
+
+      // Otros errores reales
       return NextResponse.json(
-        { ok: false, error: msg },
+        { ok: false, error: message || "Brevo error" },
         { status: 400 }
       );
     }
 
+    // Nuevo contacto o actualización correcta
     return NextResponse.json({ ok: true }, { status: 200 });
   } catch (e) {
     return NextResponse.json(

@@ -19,6 +19,7 @@ const i18n = {
     button: 'Subscribe',
     buttonLoading: 'Subscribing…',
     ok: "You’re in! Check your inbox 💌",
+    already: "You’re already subscribed with this email 💌",
     errInvalid: 'Please enter a valid email.',
     errNet: 'Something went wrong. Please try again.',
     consent:
@@ -37,6 +38,7 @@ const i18n = {
     button: 'Suscribirme',
     buttonLoading: 'Enviando…',
     ok: '¡Listo! Ya estás en la lista 💌',
+    already: 'Este correo ya está suscrito 💌',
     errInvalid: 'Por favor escribe un correo válido.',
     errNet: 'Algo salió mal. Inténtalo de nuevo.',
     consent:
@@ -86,7 +88,12 @@ export default function JoinPage() {
       }
 
       if (res.ok && data && data.ok) {
-        setMsg({ type: 'ok', text: t.ok });
+        // 👉 Diferenciar nuevo vs ya suscrito
+        if (data.already) {
+          setMsg({ type: 'ok', text: t.already });
+        } else {
+          setMsg({ type: 'ok', text: t.ok });
+        }
         setEmail('');
       } else {
         setMsg({
@@ -180,7 +187,7 @@ export default function JoinPage() {
               {t.consent}
             </p>
 
-            {/* Redes sociales: sección más protagonista */}
+            {/* Redes sociales */}
             <div className="mt-7">
               <p className="text-center text-[11px] font-semibold tracking-[0.18em] text-[--graphite-500] uppercase">
                 {t.socialTitle}
