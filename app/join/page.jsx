@@ -15,6 +15,8 @@ const i18n = {
   en: {
     title: 'Join the Heavenly Knits Family 💕',
     desc: 'Get updates about new Heavenly Knits drops, product launches, and special discounts. No spam, just cozy news.',
+    nameLabel: 'Name (optional)',
+    namePlaceholder: 'Your name',
     placeholder: 'you@email.com',
     button: 'Subscribe',
     buttonLoading: 'Subscribing…',
@@ -34,6 +36,8 @@ const i18n = {
   es: {
     title: 'Únete a la familia Heavenly Knits 💕',
     desc: 'Recibe novedades de Heavenly Knits: nuevos productos, lanzamientos y descuentos especiales. Sin spam, solo noticias acogedoras.',
+    nameLabel: 'Nombre (opcional)',
+    namePlaceholder: 'Tu nombre',
     placeholder: 'tu@email.com',
     button: 'Suscribirme',
     buttonLoading: 'Enviando…',
@@ -56,6 +60,7 @@ export default function JoinPage() {
   const [lang, setLang] = useState('en');
   const t = i18n[lang];
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState(null); // { type: 'ok' | 'err', text: string }
@@ -77,7 +82,10 @@ export default function JoinPage() {
       const res = await fetch('/api/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: v }),
+        body: JSON.stringify({
+          email: v,
+          firstName: name.trim() || undefined,
+        }),
       });
 
       let data = null;
@@ -88,13 +96,14 @@ export default function JoinPage() {
       }
 
       if (res.ok && data && data.ok) {
-        // 👉 Diferenciar nuevo vs ya suscrito
         if (data.already) {
           setMsg({ type: 'ok', text: t.already });
         } else {
           setMsg({ type: 'ok', text: t.ok });
         }
         setEmail('');
+        // opcional: NO borramos el nombre, para que no tenga que escribirlo siempre
+        // setName('');
       } else {
         setMsg({
           type: 'err',
@@ -150,6 +159,19 @@ export default function JoinPage() {
             </p>
 
             <form onSubmit={onSubmit} className="space-y-3">
+              {/* Nombre opcional */}
+              <label className="block text-xs font-medium text-[--graphite-600]">
+                {t.nameLabel}
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t.namePlaceholder}
+                  className="mt-1 w-full rounded-full border border-pink-100 bg-white px-4 py-2.5 text-sm outline-none ring-0 transition focus:border-[--pinkBrand] focus:ring-2 focus:ring-[--pinkBrand]/40"
+                />
+              </label>
+
+              {/* Email obligatorio */}
               <label className="block text-xs font-medium text-[--graphite-600]">
                 Email
                 <input
@@ -219,7 +241,7 @@ export default function JoinPage() {
                   href={SETTINGS.tiktok}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#25f4ee] bg-[--graphite-900] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg:black hover:shadow-md transition"
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#25f4ee] bg-[--graphite-900] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-black hover:shadow-md transition"
                 >
                   {t.tiktok}
                 </a>
