@@ -19,8 +19,8 @@ const i18n = {
     button: 'Subscribe',
     buttonLoading: 'Subscribing…',
     ok: "You’re in! Check your inbox 💌",
-    already: "You’re already subscribed with this email 💌",
-    errInvalid: 'Please enter a valid email.',
+    already: "You’re already on our list with this email 💌",
+    errInvalid: 'Please check your email address and try again.',
     errNet: 'Something went wrong. Please try again.',
     consent:
       'By subscribing, you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
@@ -38,8 +38,8 @@ const i18n = {
     button: 'Suscribirme',
     buttonLoading: 'Enviando…',
     ok: '¡Listo! Ya estás en la lista 💌',
-    already: 'Este correo ya está suscrito 💌',
-    errInvalid: 'Por favor escribe un correo válido.',
+    already: 'Este correo ya está suscrito a Heavenly Knits 💌',
+    errInvalid: 'Revisa tu correo electrónico e inténtalo de nuevo.',
     errNet: 'Algo salió mal. Inténtalo de nuevo.',
     consent:
       'Al suscribirte aceptas recibir correos de Heavenly Knits. Puedes darte de baja cuando quieras.',
@@ -219,7 +219,7 @@ export default function JoinPage() {
                   href={SETTINGS.tiktok}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#25f4ee] bg-[--graphite-900] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-black hover:shadow-md transition"
+                  className="flex-1 inline-flex items-center justify-center rounded-full border border-[#25f4ee] bg-[--graphite-900] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg:black hover:shadow-md transition"
                 >
                   {t.tiktok}
                 </a>
