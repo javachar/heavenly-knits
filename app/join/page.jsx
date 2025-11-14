@@ -101,9 +101,9 @@ export default function JoinPage() {
         } else {
           setMsg({ type: 'ok', text: t.ok });
         }
+        // 👉 limpiar ambos campos después de éxito
         setEmail('');
-        // opcional: NO borramos el nombre, para que no tenga que escribirlo siempre
-        // setName('');
+        setName('');
       } else {
         setMsg({
           type: 'err',
