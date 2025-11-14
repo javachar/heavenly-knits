@@ -19,7 +19,7 @@ const i18n = {
     buttonLoading: 'Subscribing…',
     ok: "You’re in! Check your inbox 💌",
     errInvalid: 'Please enter a valid email.',
-    errNet: 'Network error. Try again.',
+    errNet: 'Something went wrong. Please try again.',
     consent:
       'By subscribing, you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
     instagram: 'Instagram',
@@ -35,7 +35,7 @@ const i18n = {
     buttonLoading: 'Enviando…',
     ok: '¡Listo! Ya estás en la lista 💌',
     errInvalid: 'Por favor escribe un correo válido.',
-    errNet: 'Error de red. Inténtalo de nuevo.',
+    errNet: 'Algo salió mal. Inténtalo de nuevo.',
     consent:
       'Al suscribirte aceptas recibir correos de Heavenly Knits. Puedes darte de baja cuando quieras.',
     instagram: 'Instagram',
@@ -67,17 +67,17 @@ export default function JoinPage() {
 
     setLoading(true);
     try {
-      // 👇 Endpoint real que ya tienes en app/api/join/route.js
       const res = await fetch('/api/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: v }),
       });
 
+      // Intentar leer JSON, pero sin romper si viene vacío
       let data = null;
       try {
         data = await res.json();
-      } catch (_) {
+      } catch {
         data = null;
       }
 
@@ -90,7 +90,7 @@ export default function JoinPage() {
           text: (data && data.error) || t.errNet,
         });
       }
-    } catch (err) {
+    } catch {
       setMsg({ type: 'err', text: t.errNet });
     } finally {
       setLoading(false);
