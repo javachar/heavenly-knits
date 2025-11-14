@@ -1,38 +1,15 @@
 'use client';
 
+import Head from 'next/head';
 import { useState } from 'react';
-import Link from 'next/link';
-import localFont from 'next/font/local';
-import { Poppins } from 'next/font/google';
-import { Languages, Instagram as InstaIcon, Youtube } from 'lucide-react';
 
-// ===== Fuentes =====
-const recoleta = localFont({
-  src: [
-    {
-      path: '/fonts/RecoletaAlt-Semibold.woff2', // <-- asegúrate del nombre
-      weight: '600',
-      style: 'normal',
-    },
-  ],
-  variable: '--font-recoleta',
-  display: 'swap',
-});
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400','500','600'],
-  variable: '--font-poppins',
-  display: 'swap',
-});
-
-// ===== Config & i18n =====
+// Links de marca (para los íconos de abajo)
 const SETTINGS = {
-  brand: 'Heavenly Knits',
   instagram: 'https://www.instagram.com/heavenlyknits.co',
   youtube: 'https://www.youtube.com/@HeavenlyKnits',
 };
 
+// Textos EN/ES (EN por defecto)
 const i18n = {
   en: {
     title: 'Join the Heavenly Knits Family 💕',
@@ -43,7 +20,11 @@ const i18n = {
     ok: "You're in! Check your inbox ✨",
     errInvalid: 'Please enter a valid email.',
     errNet: 'Network error. Try again.',
-    legal: 'By subscribing you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
+    legal:
+      'By subscribing, you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
+    instagram: 'Instagram',
+    youtube: 'YouTube',
+    lang: 'ES',
   },
   es: {
     title: 'Únete a la familia Heavenly Knits 💕',
@@ -54,12 +35,16 @@ const i18n = {
     ok: '¡Listo! Revisa tu correo ✨',
     errInvalid: 'Ingresa un correo válido.',
     errNet: 'Error de red. Intenta de nuevo.',
-    legal: 'Al suscribirte aceptas recibir emails de Heavenly Knits. Puedes darte de baja cuando quieras.',
+    legal:
+      'Al suscribirte aceptas recibir emails de Heavenly Knits. Puedes darte de baja cuando quieras.',
+    instagram: 'Instagram',
+    youtube: 'YouTube',
+    lang: 'EN',
   },
 };
 
 export default function JoinPage() {
-  const [lang, setLang] = useState('en'); // EN por defecto
+  const [lang, setLang] = useState('en');
   const t = i18n[lang];
 
   const [email, setEmail] = useState('');
@@ -98,91 +83,119 @@ export default function JoinPage() {
   }
 
   return (
-    <div
-      className={`${poppins.variable} ${recoleta.variable} min-h-screen bg-[--hero] text-[--graphite-900]`}
-      style={{ fontFamily: 'var(--font-poppins), ui-sans-serif, system-ui' }}
-    >
-      {/* velo suave como el hero */}
-      <div className="fixed inset-0 pointer-events-none" style={{ background: 'var(--brand-bg)', opacity: 0.08 }} />
+    <>
+      {/* Meta para NO indexar esta página */}
+      <Head>
+        <meta name="robots" content="noindex,nofollow" />
+        <link rel="canonical" href="https://heavenlyknits.com/" />
 
-      {/* Botón idioma (no navbar) */}
-      <div className="fixed top-4 right-4 z-10">
+        {/* Poppins desde Google */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
+
+        {/* Recoleta Alt Semibold desde /public (no import de módulo) */}
+        <style>{`
+          @font-face {
+            font-family: 'RecoletaAlt';
+            src: url('/fonts/recoleta-alt-semibold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+          }
+          :root {
+            --join-card-shadow: 0 14px 28px rgba(0,0,0,0.06), 0 8px 12px rgba(0,0,0,0.04);
+          }
+          .title-recoleta { font-family: 'RecoletaAlt', ui-serif, Georgia, serif; }
+          .copy-poppins { font-family: 'Poppins', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; }
+        `}</style>
+      </Head>
+
+      {/* Fondo estilo hero (sin navbar) */}
+      <div
+        className="min-h-screen text-[--graphite-900]"
+        style={{
+          background:
+            'linear-gradient(180deg, var(--brand-bg) 0%, rgba(255,255,255,0) 40%), var(--hero)',
+        }}
+      >
+        {/* Toggle de idioma discreto (arriba-derecha) */}
         <button
           onClick={() => setLang((p) => (p === 'en' ? 'es' : 'en'))}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-[--graphite-100] bg-white/70 backdrop-blur text-sm hover:bg-white shadow-sm"
+          className="fixed top-4 right-4 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-full border border-white/60 bg-white/70 backdrop-blur text-sm hover:bg-white shadow"
           aria-label="Toggle language"
         >
-          <Languages size={16} /> {lang === 'en' ? 'ES' : 'EN'}
+          {t.lang}
         </button>
-      </div>
 
-      {/* Contenido centrado */}
-      <main className="min-h-[calc(100svh)] grid place-items-center px-4 py-10">
-        <div className="max-w-lg w-full bg-white border border-[--graphite-100] rounded-3xl p-8 shadow-sm">
-          {/* Título con Recoleta */}
-          <h1
-            className="mb-2"
-            style={{
-              fontFamily: 'var(--font-recoleta), ui-serif, Georgia',
-              fontWeight: 600,
-              fontSize: 'clamp(28px, 2.2vw, 36px)',
-              letterSpacing: '-0.01em',
-            }}
+        {/* Contenido centrado */}
+        <main className="min-h-[calc(100svh-0px)] grid place-items-center px-4 py-10">
+          <div
+            className="max-w-lg w-full bg-white border border-[--graphite-100] rounded-3xl p-8"
+            style={{ boxShadow: 'var(--join-card-shadow)' }}
           >
-            {t.title}
-          </h1>
+            <h1 className="title-recoleta text-[24px] sm:text-[26px] font-semibold mb-2">
+              {t.title}
+            </h1>
 
-          {/* Descripción con Poppins */}
-          <p className="text-[--graphite-600] mb-6">
-            {t.desc}
-          </p>
+            <p className="copy-poppins text-[--graphite-700] text-[15px] leading-relaxed mb-6">
+              {t.desc}
+            </p>
 
-          <form onSubmit={onSubmit} className="flex gap-3">
-            <input
-              type="email"
-              required
-              placeholder={t.placeholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 h-12 rounded-xl px-4 border border-[--graphite-200] focus:outline-none focus:ring-2 focus:ring-[--hk-deeprose]/30"
-            />
-            <button
-              disabled={loading}
-              className="h-12 px-5 rounded-xl bg-[--hk-deeprose] text-white font-semibold disabled:opacity-60"
-            >
-              {loading ? t.sending : t.btn}
-            </button>
-          </form>
+            <form onSubmit={onSubmit} className="copy-poppins flex gap-3">
+              <input
+                type="email"
+                required
+                placeholder={t.placeholder}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 h-12 rounded-xl px-4 border border-[--graphite-200] focus:outline-none focus:ring-2 focus:ring-[--hk-deeprose]/30"
+              />
+              <button
+                disabled={loading}
+                className="h-12 px-5 rounded-xl bg-[--hk-deeprose] text-white font-semibold disabled:opacity-60 hover:brightness-95 active:scale-[0.99]"
+              >
+                {loading ? t.sending : t.btn}
+              </button>
+            </form>
 
-          {msg && (
-            <div className={`mt-4 text-sm ${msg.type === 'ok' ? 'text-green-700' : 'text-red-600'}`}>
-              {msg.text}
+            {msg && (
+              <div
+                className={`copy-poppins mt-4 text-sm ${
+                  msg.type === 'ok' ? 'text-green-700' : 'text-red-600'
+                }`}
+              >
+                {msg.text}
+              </div>
+            )}
+
+            <p className="copy-poppins mt-4 text-xs text-[--graphite-500]">{t.legal}</p>
+
+            <div className="copy-poppins mt-6 flex items-center gap-3 text-[--graphite-600]">
+              <a
+                href={SETTINGS.instagram}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 hover:text-[--graphite-900]"
+              >
+                {t.instagram}
+              </a>
+              <span className="opacity-40">•</span>
+              <a
+                href={SETTINGS.youtube}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 hover:text-[--graphite-900]"
+              >
+                {t.youtube}
+              </a>
             </div>
-          )}
-
-          <p className="mt-4 text-xs text-[--graphite-500]">
-            {t.legal}
-          </p>
-
-          {/* Social (opcional) */}
-          <div className="mt-6 flex items-center gap-3 text-[--graphite-600]">
-            <a href={SETTINGS.instagram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-[--graphite-900]">
-              <InstaIcon size={16} /> Instagram
-            </a>
-            <span className="opacity-40">•</span>
-            <a href={SETTINGS.youtube} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-[--graphite-900]">
-              <Youtube size={16} /> YouTube
-            </a>
           </div>
-
-          {/* Link de regreso (sin navbar) */}
-          <div className="mt-6 text-sm">
-            <Link href="/" className="underline hover:opacity-80">
-              ← {lang === 'en' ? 'Back to home' : 'Volver al inicio'}
-            </Link>
-          </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
