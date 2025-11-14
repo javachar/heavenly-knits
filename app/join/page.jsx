@@ -7,13 +7,14 @@ import { useState } from 'react';
 const SETTINGS = {
   instagram: 'https://www.instagram.com/heavenlyknits.co',
   youtube: 'https://www.youtube.com/@HeavenlyKnits',
+  tiktok: 'https://www.tiktok.com/@heavenly.knits',
 };
 
 // Textos EN/ES
 const i18n = {
   en: {
     title: 'Join the Heavenly Knits Family 💕',
-    desc: 'Be the first to know about new handmade designs, behind-the-scenes stories, and freebies. No spam.',
+    desc: 'Get updates about new Heavenly Knits drops, product launches, and special discounts. No spam, just cozy news.',
     placeholder: 'you@email.com',
     button: 'Subscribe',
     buttonLoading: 'Subscribing…',
@@ -24,12 +25,14 @@ const i18n = {
       'By subscribing, you agree to receive emails from Heavenly Knits. You can unsubscribe anytime.',
     instagram: 'Instagram',
     youtube: 'YouTube',
+    tiktok: 'TikTok',
+    socialTitle: 'Follow Heavenly Knits',
     langToggleLabel: 'ES',
     langToggleAria: 'View this page in Spanish',
   },
   es: {
     title: 'Únete a la familia Heavenly Knits 💕',
-    desc: 'Sé la primera en enterarte de nuevos diseños hechos a mano, historias detrás de cámaras y regalitos. Sin spam.',
+    desc: 'Recibe novedades de Heavenly Knits: nuevos productos, lanzamientos y descuentos especiales. Sin spam, solo noticias acogedoras.',
     placeholder: 'tu@email.com',
     button: 'Suscribirme',
     buttonLoading: 'Enviando…',
@@ -40,6 +43,8 @@ const i18n = {
       'Al suscribirte aceptas recibir correos de Heavenly Knits. Puedes darte de baja cuando quieras.',
     instagram: 'Instagram',
     youtube: 'YouTube',
+    tiktok: 'TikTok',
+    socialTitle: 'Síguenos en redes',
     langToggleLabel: 'EN',
     langToggleAria: 'Ver esta página en inglés',
   },
@@ -73,7 +78,6 @@ export default function JoinPage() {
         body: JSON.stringify({ email: v }),
       });
 
-      // Intentar leer JSON, pero sin romper si viene vacío
       let data = null;
       try {
         data = await res.json();
@@ -176,24 +180,37 @@ export default function JoinPage() {
               {t.consent}
             </p>
 
-            <div className="mt-6 flex items-center justify-center gap-4 text-xs font-medium text-[--graphite-600]">
-              <a
-                href={SETTINGS.instagram}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 hover:text-[--graphite-900]"
-              >
-                {t.instagram}
-              </a>
-              <span className="text-[--graphite-300]">•</span>
-              <a
-                href={SETTINGS.youtube}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 hover:text-[--graphite-900]"
-              >
-                {t.youtube}
-              </a>
+            {/* Redes sociales: sección más grande */}
+            <div className="mt-6">
+              <p className="text-center text-xs font-semibold tracking-wide text-[--graphite-500] uppercase">
+                {t.socialTitle}
+              </p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                <a
+                  href={SETTINGS.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded-full border border-[--graphite-100] bg-[--ivory] px-4 py-2 text-sm font-medium text-[--graphite-700] hover:border-[--pinkBrand] hover:bg-pink-50 hover:text-[--graphite-900] transition"
+                >
+                  {t.instagram}
+                </a>
+                <a
+                  href={SETTINGS.youtube}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded-full border border-[--graphite-100] bg-[--ivory] px-4 py-2 text-sm font-medium text-[--graphite-700] hover:border-[--pinkBrand] hover:bg-pink-50 hover:text-[--graphite-900] transition"
+                >
+                  {t.youtube}
+                </a>
+                <a
+                  href={SETTINGS.tiktok}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center rounded-full border border-[--graphite-100] bg-[--ivory] px-4 py-2 text-sm font-medium text-[--graphite-700] hover:border-[--pinkBrand] hover:bg-pink-50 hover:text-[--graphite-900] transition"
+                >
+                  {t.tiktok}
+                </a>
+              </div>
             </div>
           </div>
         </main>
